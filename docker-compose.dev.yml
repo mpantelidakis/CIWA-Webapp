@@ -1,0 +1,63 @@
+ 
+version: '3'
+
+services:
+  flask:
+    image: webapp-flask
+    build:
+      context: ./flask
+      dockerfile: Dockerfile-flask
+    environment:
+      # APP_ENV: "prod"
+      APP_DEBUG: "True"
+      # APP_PORT: 5000
+      MONGODB_DATABASE: flaskdb
+      # MONGODB_USERNAME: flaskuser
+      # # Replace with env file l8er
+      # MONGODB_PASSWORD: pwd
+      # MONGODB_HOSTNAME: mongodb
+    volumes:
+      - "./flask/:/app"
+    links:
+      - mongodb
+      
+  nginx:
+    image: webapp-nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx
+    ports:
+      - "5000:80"
+    links:
+      - flask
+      
+  mongodb:
+    image: webapp-mongo
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile-mongo
+    restart: always
+    environment:
+      # MONGO_INITDB_ROOT_USERNAME: usr 
+      # Replace with env file l8er
+      # MONGO_INITDB_ROOT_PASSWORD: pwd
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodbdata:/data/db
+  
+  react:
+    image: webapp-react
+    build:
+      context: ./client
+      dockerfile: Dockerfile-react.dev
+    volumes:
+      - './client:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    ports:
+      - '3000:3000'
+    links:
+      - "flask"
+    stdin_open: true
+volumes:
+  mongodbdata:

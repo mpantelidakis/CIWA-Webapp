@@ -6,6 +6,15 @@ FROM python:3
 # Make python print in the console
 ENV PYTHONUNBUFFERED 0
 
+# Prevents Python from writing pyc files to disc
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Expose the port uWSGI will listen on
+EXPOSE 5000
+
 # Set an environment variable with the exiftool version
 ENV EXIFTOOL_VERSION=11.93
 
@@ -28,8 +37,6 @@ ENV APP /app
 RUN mkdir $APP
 WORKDIR $APP
 
-# Expose the port uWSGI will listen on
-EXPOSE 5000
 
 # Copy the requirements file in order to install
 # Python dependencies

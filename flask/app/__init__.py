@@ -2,10 +2,12 @@ import os
 from flask import Flask
 from flask_restful import Api
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 
 UPLOAD_FOLDER = '/vol/web/media/'
 
 app = Flask(__name__)
+# cors = CORS(app, resources={r"*": {"origins": "*"}})
 api = Api(app)
 # app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

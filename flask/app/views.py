@@ -83,6 +83,7 @@ class FileList(Resource):
 		files = dbfiles.find()
 		if files.count() == 0:
 			resp = jsonify({"msg":"No files found."})
+			print("No files found")
 			resp.status_code = 200
 			return resp
 
@@ -109,10 +110,10 @@ class File(Resource):
 		resp = jsonify({"msg":"The file does not exist."})
 		resp.status_code = 200
 		return resp
+		
 
-
-api.add_resource(File, '/file/<string:filename>')
-api.add_resource(FileList, '/files')
+api.add_resource(File, '/api/file/<string:filename>')
+api.add_resource(FileList, '/api/files')
 
 
 def collect_metadata(file_path):
