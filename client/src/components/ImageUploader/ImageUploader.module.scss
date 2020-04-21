@@ -1,0 +1,58 @@
+.ImageUploader{
+    
+    display: inline-block;
+    width: 36rem;
+    min-width: 30rem;
+
+}
+
+.Message{
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    max-width: inherit;
+    word-wrap: break-word;
+}
+
+.Buttons{
+    display: flex;
+    justify-content: center;
+}
+
+.Btn{
+    border: .2rem solid black;
+    background-color: white;
+    color: black;
+    padding: .5rem 2rem;
+    cursor: pointer;
+    border-radius: .3rem;
+    font-size: 1.3rem;
+    transition: all .25s ease-in-out;
+
+    &__Select{
+        border-color: #2196F3;
+        color: dodgerblue;
+        margin-right: 1.5rem;
+
+        &:hover {
+            background: #2196F3;
+            color: white;
+        }
+    }
+
+    &__Upload{
+        background: #2196F3;
+        color: white;
+        border-color: #2196F3;
+        transition: all .2s ease-in-out;
+        
+        &:hover {
+            transform: scale(1.05);
+            box-shadow: 1rem 1rem 2rem rgba(128, 128, 128, 0.308);
+        }
+
+        &:active {
+            transform: scale(1.01);
+            box-shadow: .8rem .8rem 2rem rgba(128, 128, 128, 0.603);
+        }
+    }
+}

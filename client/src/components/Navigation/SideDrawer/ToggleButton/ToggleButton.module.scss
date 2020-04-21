@@ -1,0 +1,43 @@
+.ToggleButton {
+    height: 100%;
+    width: 40px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.ToggleButton span {
+    width: 25px;
+    height:3px;
+    background-color: white;
+    display: inline-block;
+    position: relative;
+    margin-top: 27px;
+}
+
+.ToggleButton span::before {
+    width: 25px;
+    height:3px;
+    background-color: white;
+    display: inline-block;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -8px;
+}
+
+.ToggleButton span::after {
+    width: 25px;
+    height:3px;
+    background-color: white;
+    display: inline-block;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+}
+
+@media (min-width: 500px) {
+    .ToggleButton {
+        display: none;
+    }
+}

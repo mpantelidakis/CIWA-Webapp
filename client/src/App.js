@@ -1,57 +1,47 @@
-import React, { useState } from "react"
-import axios from 'axios';
-import logo from './logo.svg';
+import React from "react"
+import { Route, Switch, withRouter, Redirect} from 'react-router-dom'
+
 import './App.css';
+
+import Layout from './containers/Layout/Layout'
+import ImageUploader from "./components/ImageUploader/ImageUploader";
+
 
 
 
 function App() {
     
-  const [files, setFiles] = useState(null);
+  let routes = (
+    <Switch>
+      <Route path="/upload" exact component={() => <ImageUploader withPreview/>} />
+      <Redirect to="/"/>
+    </Switch>
+  )
 
-  const fetchData = async () => {
+  // const fetchData = async () => {
     
-        axios.get('http://localhost:5000/api/files', {
+  //       axios.get('http://localhost:5000/api/files', {
           
-        })
-        .then(function (response) {
-          console.log(response);
-          setFiles(response.data)
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .then(function () {
-          // always executed
-        });  
-  }
+  //       })
+  //       .then(function (response) {
+  //         console.log(response);
+  //         setFiles(response.data)
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       })
+  //       .then(function () {
+  //         // always executed
+  //       });  
+  // }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <button className="fetch-button" onClick={fetchData}>
-          Fetch Data
-        </button>
-
-        {files ? <span>cool</span> : <span>no files</span>}
-   
-        
-        <hr />
-      </header>
+    <div>
+      <Layout>
+          {routes}
+      </Layout>
     </div>
   );
 }
 
-export default App;
+export default withRouter(App);

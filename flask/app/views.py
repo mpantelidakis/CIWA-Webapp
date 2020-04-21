@@ -1,5 +1,5 @@
 
-import os, json
+import os, json, re
 import urllib.request
 from app import app
 from flask import Flask, request, redirect, jsonify, send_from_directory
@@ -35,6 +35,13 @@ def collect_metadata(file_path):
 	metadata_dictionary = fie.process_image(file_path)
 	return metadata_dictionary
 
+def extract_float(dirtystr):
+        """
+        Extract the float value of a string, helpful for parsing the exiftool data
+        :return:
+        """
+        digits = re.findall(r"[-+]?\d*\.\d+|\d+", dirtystr)
+        return float(digits[0])
 
 class FileList(Resource):
 	# Used upload a new image or get all the available images
@@ -57,9 +64,19 @@ class FileList(Resource):
 			# save_path = os.path.join(os.getcwd() + '/images/', filename)
 			file.save(save_path)
 
-			# Instantiate the flir image extractor
-			fie = FlirImageExtractor(is_debug = True)
 			metadata_dictionary = collect_metadata(save_path)
+
+			# All temperatures are in celcius
+			metadata_dictionary['AtmosphericTemperature'] = extract_float(metadata_dictionary['AtmosphericTemperature'])
+			metadata_dictionary['IRWindowTemperature'] = extract_float(metadata_dictionary['IRWindowTemperature'])
+			metadata_dictionary['ReflectedApparentTemperature'] = extract_float(metadata_dictionary['ReflectedApparentTemperature'])
+
+			# Relative humidity is a percentage
+			metadata_dictionary['RelativeHumidity'] = extract_float(metadata_dictionary['RelativeHumidity'])
+
+			# In meters
+			metadata_dictionary['SubjectDistance'] = extract_float(metadata_dictionary['SubjectDistance'])
+
 
 			# Save the file info in the db
 			file_entry = {
