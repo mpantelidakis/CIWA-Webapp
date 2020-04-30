@@ -1,7 +1,7 @@
 import React from "react"
 import { Route, Switch, withRouter, Redirect} from 'react-router-dom'
 
-import './App.css';
+import './App.scss';
 
 import Layout from './containers/Layout/Layout'
 import ImageUploader from "./components/ImageUploader/ImageUploader";

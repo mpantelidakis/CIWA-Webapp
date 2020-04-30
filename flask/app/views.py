@@ -84,10 +84,22 @@ class FileList(Resource):
 				'metadata': metadata_dictionary
 			}
 
+			resp = {}
+			resp['metadata'] = metadata_dictionary
+			
 			# If image name exists, replace it. If it does not, create it.
-			dbfiles.replace_one({"file_name": filename}, file_entry, True)
+			check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
 
-			resp = jsonify({"msg":"File uploaded successfully."})
+			# Append a message to the response object
+			if check.upserted_id is not None:
+				resp['msg'] = "File uploaded successfully."
+			else:
+				resp['msg'] = "File updated successfully."
+
+			# Jsonify the response
+			resp = jsonify(resp)
+
+			# Attach the status code
 			resp.status_code = 201
 			return resp
 		else:

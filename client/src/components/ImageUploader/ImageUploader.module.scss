@@ -1,8 +1,9 @@
 .ImageUploader{
     
-    display: inline-block;
+    display: block;
     width: 36rem;
     min-width: 30rem;
+    margin: 0 auto;
 
 }
 
@@ -11,6 +12,14 @@
     margin-bottom: 1rem;
     max-width: inherit;
     word-wrap: break-word;
+    text-align: center;
+}
+
+.MetadataPanel{
+    display: block;
+    width: 36rem;
+    min-width: 30rem;
+    margin: 0 auto;
 }
 
 .Buttons{
@@ -27,6 +36,10 @@
     border-radius: .3rem;
     font-size: 1.3rem;
     transition: all .25s ease-in-out;
+
+    &:disabled{
+        cursor: not-allowed;
+    }
 
     &__Select{
         border-color: #2196F3;
@@ -53,6 +66,28 @@
         &:active {
             transform: scale(1.01);
             box-shadow: .8rem .8rem 2rem rgba(128, 128, 128, 0.603);
+        }
+    }
+
+    &__Apply{
+        border-color: #2196F3;
+        color: dodgerblue;
+        margin-right: 1.5rem;
+
+        &:hover {
+            background: #2196F3;
+            color: white;
+        }
+    }
+
+    &__Cancel{
+        border-color: #2196F3;
+        color: dodgerblue;
+        margin-right: 1.5rem;
+
+        &:hover {
+            background: #2196F3;
+            color: white;
         }
     }
 }
