@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import classes from './Modal.module.css'
+import classes from './Modal.module.scss'
 import Backdrop from '../../UI/Backdrop/Backdrop'
 
 class Modal extends Component {

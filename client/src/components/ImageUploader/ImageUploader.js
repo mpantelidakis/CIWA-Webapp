@@ -11,6 +11,8 @@ import Input from '../../components/UI/Input/Input'
 import Button from '../../components/UI/Button/Button'
 import { updateObject, checkValidity } from '../../shared/utility'
 
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
+
 
 const ImageUploader = props => {
 
@@ -127,8 +129,9 @@ const ImageUploader = props => {
     const fileSelectedHandler = (event) => {
         console.log(event.target.files[0]);
         setFile(event.target.files[0]);
+        setImageMetadata(null)
         if (props.withPreview)
-        setFilePreviewUrl(URL.createObjectURL(event.target.files[0]))
+            setFilePreviewUrl(URL.createObjectURL(event.target.files[0]))
     }
 
     const syncForm = (dict) => {
@@ -160,6 +163,17 @@ const ImageUploader = props => {
             syncForm(res.data.metadata);
             console.log(res.data.msg);
 
+        })
+        .catch(error => {
+            if (error.response) {
+                /*
+                 * The request was made and the server responded with a
+                 * status code that falls out of the range of 2xx
+                 */
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }
         })
     }
 
@@ -204,7 +218,7 @@ const ImageUploader = props => {
 
         const metadata = {}
         for (let formElementIdentifier in metaform){
-            metadata[formElementIdentifier] = metaform[formElementIdentifier].value
+            metadata[formElementIdentifier] = String(metaform[formElementIdentifier].value)
         }
 
         // Convert our dictionary to JSON format so we can parse the request using json.loads
@@ -225,8 +239,8 @@ const ImageUploader = props => {
         .then(res => {
 
             // console.log(res.data.metadata)
-            // setImageMetadata(res.data.metadata)
-            // console.log(res.data.msg)
+            setImageMetadata(res.data.metadata)
+            console.log(res.data.msg)
 
         })
     }
@@ -341,4 +355,4 @@ const ImageUploader = props => {
     )
 }
 
-export default ImageUploader
+export default withErrorHandler(ImageUploader, axios)
