@@ -26,9 +26,13 @@ import numpy as np
 
 class FlirImageExtractor:
 
-    def __init__(self, exiftool_path="exiftool", is_debug=False):
+    def __init__(self, exiftool_path="exiftool", is_debug=False, provided_metadata=None):
         self.exiftool_path = exiftool_path
         self.is_debug = is_debug
+        self.extracted_metadata = None
+        self.provided_metadata= provided_metadata
+        self.updated_metadata = None
+
         self.is_debug_number_of_images = 0
         self.is_debug_number_of_images_with_metadata = 0
         self.flir_img_filename = ""
@@ -54,10 +58,42 @@ class FlirImageExtractor:
         self.at = None
         self.rh = None
         self.metadata_in_file = False
-        self.meta = None
 
     pass
 
+
+    
+    def extract_metadata(self, flir_img_filename):
+
+        self.flir_img_filename = flir_img_filename
+        if self.is_debug:
+            print("INFO Flir image filepath:{}".format(flir_img_filename))
+
+        if not os.path.isfile(flir_img_filename):
+            raise ValueError("Input file does not exist or this user don't have permission on this file")
+
+        meta_json = subprocess.check_output(
+            [self.exiftool_path, self.flir_img_filename, '-Emissivity', '-SubjectDistance', '-AtmosphericTemperature',
+            '-ReflectedApparentTemperature', '-IRWindowTemperature', '-IRWindowTransmission', '-RelativeHumidity',
+            '-PlanckR1', '-PlanckB', '-PlanckF', '-PlanckO', '-PlanckR2', '-j'])
+        meta = json.loads(meta_json.decode())[0]
+        return meta
+    
+
+    def modify_metadata(self, flir_img_filename):
+
+        self.extracted_metadata = self.extract_metadata(flir_img_filename)
+
+        if self.extracted_metadata and self.provided_metadata:
+            print("Extracted Metadata:{}".format(self.extracted_metadata))
+            print("Provided Metadata:{}".format(self.provided_metadata))
+
+            self.updated_metadata = {k: self.provided_metadata.get(k, v) for k, v in self.extracted_metadata.items()}
+
+            print("Updated Metadata:{}".format(self.updated_metadata))
+
+            return self.updated_metadata
+    
 
     def process_image(self, flir_img_filename):
         """
@@ -81,8 +117,6 @@ class FlirImageExtractor:
 
         self.rgb_image_np = self.extract_embedded_image()
         self.thermal_image_np = self.extract_thermal_image()
-        if self.meta:
-            return self.meta
 
     # def get_image_type(self):
     #     """

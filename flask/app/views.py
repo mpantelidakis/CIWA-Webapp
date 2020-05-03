@@ -30,9 +30,14 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def collect_metadata(file_path):
+def extract_metadata(file_path):
 	fie = FlirImageExtractor(is_debug = True)
-	metadata_dictionary = fie.process_image(file_path)
+	metadata_dictionary = fie.extract_metadata(file_path)
+	return metadata_dictionary
+
+def modify_metadata(file_path, metadata):
+	fie = FlirImageExtractor(is_debug = True, provided_metadata=metadata)
+	metadata_dictionary = fie.modify_metadata(file_path)
 	return metadata_dictionary
 
 def extract_float(dirtystr):
@@ -86,47 +91,55 @@ class FileList(Resource):
 				print("The request object also has metadata attached to it.")
 				print(json_meta)
 
+				# Extract and modify the image metadata and return a dictionary
+				metadata_dictionary = modify_metadata(save_path, json_meta)
+
 			else:
-	
 				# Extract the image metadata and return a dictionary
-				metadata_dictionary = collect_metadata(save_path)
+				metadata_dictionary = extract_metadata(save_path)
 
-				# All temperatures are in celcius
-				metadata_dictionary['AtmosphericTemperature'] = extract_float(metadata_dictionary['AtmosphericTemperature'])
-				metadata_dictionary['IRWindowTemperature'] = extract_float(metadata_dictionary['IRWindowTemperature'])
-				metadata_dictionary['ReflectedApparentTemperature'] = extract_float(metadata_dictionary['ReflectedApparentTemperature'])
-
-				# Relative humidity is a percentage
-				metadata_dictionary['RelativeHumidity'] = extract_float(metadata_dictionary['RelativeHumidity'])
-
-				# In meters
-				metadata_dictionary['SubjectDistance'] = extract_float(metadata_dictionary['SubjectDistance'])
-
-
-				# Save the file info in the db
-				file_entry = {
-					'file_name': filename,
-					'metadata': metadata_dictionary
-				}
-
-				resp = {}
-				resp['metadata'] = metadata_dictionary
-				
-				# If image name exists, replace it. If it does not, create it.
-				check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
-
-				# Append a message to the response object
-				if check.upserted_id is not None:
-					resp['msg'] = "File uploaded successfully."
-				else:
-					resp['msg'] = "File updated successfully."
-
-				# Jsonify the response
+			resp = {}
+			if not 'AtmosphericTemperature' in metadata_dictionary.keys():
+				resp['error'] = "Image does not contain weather metadata."
 				resp = jsonify(resp)
-
-				# Attach the status code
-				resp.status_code = 201
+				resp.status_code = 400
 				return resp
+			
+			# All temperatures are in celcius
+			metadata_dictionary['AtmosphericTemperature'] = extract_float(metadata_dictionary['AtmosphericTemperature'])
+			metadata_dictionary['IRWindowTemperature'] = extract_float(metadata_dictionary['IRWindowTemperature'])
+			metadata_dictionary['ReflectedApparentTemperature'] = extract_float(metadata_dictionary['ReflectedApparentTemperature'])
+
+			# Relative humidity is a percentage
+			metadata_dictionary['RelativeHumidity'] = extract_float(metadata_dictionary['RelativeHumidity'])
+
+			# In meters
+			metadata_dictionary['SubjectDistance'] = extract_float(metadata_dictionary['SubjectDistance'])
+
+
+			# Save the file info in the db
+			file_entry = {
+				'file_name': filename,
+				'metadata': metadata_dictionary
+			}
+
+			resp['metadata'] = metadata_dictionary
+			
+			# If image name exists, replace it. If it does not, create it.
+			check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
+
+			# Append a message to the response object
+			if check.upserted_id is not None:
+				resp['msg'] = "File uploaded successfully."
+			else:
+				resp['msg'] = "File updated successfully."
+
+			# Jsonify the response
+			resp = jsonify(resp)
+
+			# Attach the status code
+			resp.status_code = 201
+			return resp
 		else:
 			resp = jsonify({'msg' : 'Allowed file types are png, jpg, jpeg'})
 			resp.status_code = 400
