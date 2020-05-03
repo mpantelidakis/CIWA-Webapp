@@ -165,38 +165,9 @@ const ImageUploader = props => {
 
         })
         .catch(error => {
-            if (error.response) {
-                /*
-                 * The request was made and the server responded with a
-                 * status code that falls out of the range of 2xx
-                 */
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            }
+            //The interceptor of the hoc handles the exception
         })
     }
-
-    // const fileUploadHandler = () => {
-    //     const fd = new FormData();
-    //     fd.append('file', file)
-    //     fd.append('metadata', imageMetadata)
-        
- 
-    //     axios.post('http://localhost:5000/api/files', fd, {
-    //         onUploadProgress: ProgressEvent => {
-    //             console.log('Upload Progress: ' + Math.round(ProgressEvent.loaded / ProgressEvent.total *100) + '%')
-    //         }
-    //     })
-    //     .then(res => {
-
-    //         console.log(res.data.metadata)
-    //         setImageMetadata(res.data.metadata)
-    //         console.log(res.data.msg)
-
-    //     })
-    // }
-
 
     const toggleFormHandler = () => {
         setFormOpen(!formOpen)

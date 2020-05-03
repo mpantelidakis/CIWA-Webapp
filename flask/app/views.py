@@ -102,7 +102,8 @@ class FileList(Resource):
 			if not 'AtmosphericTemperature' in metadata_dictionary.keys():
 				resp['error'] = "Image does not contain weather metadata."
 				resp = jsonify(resp)
-				resp.status_code = 400
+				# Not acceptable
+				resp.status_code = 406
 				return resp
 			
 			# All temperatures are in celcius
