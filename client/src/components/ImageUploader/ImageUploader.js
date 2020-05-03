@@ -202,23 +202,31 @@ const ImageUploader = props => {
         // which in turn reloads the form
         event.preventDefault()
 
-        const formData = {}
+        const metadata = {}
         for (let formElementIdentifier in metaform){
-            formData[formElementIdentifier] = metaform[formElementIdentifier].value
+            metadata[formElementIdentifier] = metaform[formElementIdentifier].value
         }
-        const payload = {
-            file: file,
-            metadata: formData
-        }
-        console.log(payload)
-        axios.post('http://localhost:5000/api/files', payload, {
+
+        // Convert our dictionary to JSON format so we can parse the request using json.loads
+        const json_meta = JSON.stringify(metadata)
+
+        // Create a new FormData object
+        const fd = new FormData();
+
+        // Attach the file and the metadata to it
+        fd.append('file', file)
+        fd.append('metadata', json_meta)
+
+        // The file of the formdata will be available under request.files
+        // The metadata of the formdata will be available under request.form.get('metadata)
+        axios.post('http://localhost:5000/api/files', fd, {
 
         })
         .then(res => {
 
-            console.log(res.data.metadata)
-            setImageMetadata(res.data.metadata)
-            console.log(res.data.msg)
+            // console.log(res.data.metadata)
+            // setImageMetadata(res.data.metadata)
+            // console.log(res.data.msg)
 
         })
     }

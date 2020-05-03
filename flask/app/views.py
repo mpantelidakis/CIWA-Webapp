@@ -44,8 +44,20 @@ def extract_float(dirtystr):
         return float(digits[0])
 
 class FileList(Resource):
-	# Used upload a new image or get all the available images
+	# Used to upload a new image or get all the available images
+
 	def post(self):
+		# The post request will have 2 different functionalities.
+
+		# If a file and a metadata MultiDict are attached to the formdata received
+		# the provided metadata will be used during temperature estimation
+
+		# If only a file is attached to the request object, the file-encoded metadata
+		# Will be used during temprature estimation
+
+    	# The file of the formdata will be available under request.files
+        # The metadata of the formdata will be available under request.form.get('metadata)
+
 		# check if the post request has the file part
 		if 'file' not in request.files:
 			resp = jsonify({'msg' : 'No file part in the request'})
@@ -58,50 +70,63 @@ class FileList(Resource):
 			return resp
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			# Uncomment l8er
+			
+			# Create the path to save the file
 			save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-			# Change l8er to the real upload path
-			# save_path = os.path.join(os.getcwd() + '/images/', filename)
+
+			# Save the file to our local storage
 			file.save(save_path)
 
-			metadata_dictionary = collect_metadata(save_path)
+			# Get the metadata part of the multipart-form
+			metadata = request.form.get('metadata')
+		
+			if metadata:
+				# Parse the data and create a Json object
+				json_meta = json.loads(metadata)
+				print("The request object also has metadata attached to it.")
+				print(json_meta)
 
-			# All temperatures are in celcius
-			metadata_dictionary['AtmosphericTemperature'] = extract_float(metadata_dictionary['AtmosphericTemperature'])
-			metadata_dictionary['IRWindowTemperature'] = extract_float(metadata_dictionary['IRWindowTemperature'])
-			metadata_dictionary['ReflectedApparentTemperature'] = extract_float(metadata_dictionary['ReflectedApparentTemperature'])
-
-			# Relative humidity is a percentage
-			metadata_dictionary['RelativeHumidity'] = extract_float(metadata_dictionary['RelativeHumidity'])
-
-			# In meters
-			metadata_dictionary['SubjectDistance'] = extract_float(metadata_dictionary['SubjectDistance'])
-
-
-			# Save the file info in the db
-			file_entry = {
-				'file_name': filename,
-				'metadata': metadata_dictionary
-			}
-
-			resp = {}
-			resp['metadata'] = metadata_dictionary
-			
-			# If image name exists, replace it. If it does not, create it.
-			check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
-
-			# Append a message to the response object
-			if check.upserted_id is not None:
-				resp['msg'] = "File uploaded successfully."
 			else:
-				resp['msg'] = "File updated successfully."
+	
+				# Extract the image metadata and return a dictionary
+				metadata_dictionary = collect_metadata(save_path)
 
-			# Jsonify the response
-			resp = jsonify(resp)
+				# All temperatures are in celcius
+				metadata_dictionary['AtmosphericTemperature'] = extract_float(metadata_dictionary['AtmosphericTemperature'])
+				metadata_dictionary['IRWindowTemperature'] = extract_float(metadata_dictionary['IRWindowTemperature'])
+				metadata_dictionary['ReflectedApparentTemperature'] = extract_float(metadata_dictionary['ReflectedApparentTemperature'])
 
-			# Attach the status code
-			resp.status_code = 201
-			return resp
+				# Relative humidity is a percentage
+				metadata_dictionary['RelativeHumidity'] = extract_float(metadata_dictionary['RelativeHumidity'])
+
+				# In meters
+				metadata_dictionary['SubjectDistance'] = extract_float(metadata_dictionary['SubjectDistance'])
+
+
+				# Save the file info in the db
+				file_entry = {
+					'file_name': filename,
+					'metadata': metadata_dictionary
+				}
+
+				resp = {}
+				resp['metadata'] = metadata_dictionary
+				
+				# If image name exists, replace it. If it does not, create it.
+				check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
+
+				# Append a message to the response object
+				if check.upserted_id is not None:
+					resp['msg'] = "File uploaded successfully."
+				else:
+					resp['msg'] = "File updated successfully."
+
+				# Jsonify the response
+				resp = jsonify(resp)
+
+				# Attach the status code
+				resp.status_code = 201
+				return resp
 		else:
 			resp = jsonify({'msg' : 'Allowed file types are png, jpg, jpeg'})
 			resp.status_code = 400
