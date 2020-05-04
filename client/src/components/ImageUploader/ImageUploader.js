@@ -245,11 +245,12 @@ const ImageUploader = props => {
     }
 
     let form = (
-        <div>
-            <h4>Please edit the incorrect values and hit Apply</h4>
+        <div className={classes.MetadataForm}>
+            <h4 className={classes.MetadataForm__title}>Please edit the incorrect values</h4>
             <form onSubmit={metaDataSubmitHandler}>
                 {formElementsArray.map(formElement => (
-                        <div key={formElement.id}>{formElement.id}
+                        <div className={classes.MetadataForm__formField}key={formElement.id}>
+                        <p className={classes.MetadataForm__InputFieldName}>{formElement.id}</p>
                         <Input
                             
                             elementType={formElement.config.elementType}
@@ -263,17 +264,19 @@ const ImageUploader = props => {
                         />
                         </div>
                 ))}
-                <Button 
-                    btnType="Danger"
-                    clicked={toggleFormHandler}>
-                        Cancel
-                </Button>
-                <Button 
-                    btnType="Success"
-                    disabled={!formIsValid}
-                    clicked={metaDataSubmitHandler}>
-                        Apply changes and upload!
-                </Button>
+                <div className={classes.Buttons}>
+                    <Button 
+                        btnType="Danger"
+                        clicked={toggleFormHandler}>
+                            Cancel
+                    </Button>
+                    <Button 
+                        btnType="Success"
+                        disabled={!formIsValid}
+                        clicked={metaDataSubmitHandler}>
+                            Apply changes and upload!
+                    </Button>
+                </div>
             </form>
         </div>
     )
@@ -304,19 +307,19 @@ const ImageUploader = props => {
         </div>
         {imageMetadata ?  
             <div className={classes.MetadataPanel}>
-                <h3>Are these values correct?</h3>
-                <p>Atmospheric Temperature :{imageMetadata.AtmosphericTemperature} (&#8451;)</p>
-                <p>Emissivity : {imageMetadata.Emissivity} (0-1)</p>
-                {/* <p>IR Window Temperature: {imageMetadata.IRWindowTemperature} (&#8451;)</p>
-                <p>IR Window Transmission: {imageMetadata.IRWindowTransmission}</p>
-                <p>Planck B: {imageMetadata.PlanckB}</p>
-                <p>Planck F: {imageMetadata.PlanckF}</p>
-                <p>Planck O: {imageMetadata.PlanckO}</p>
-                <p>Planck R1: {imageMetadata.PlanckR1}</p>
-                <p>Planck R2: {imageMetadata.PlanckR2}</p> */}
-                <p>Reflected Apparent Temperature: {imageMetadata.ReflectedApparentTemperature} (&#8451;)</p>
-                <p>Relative Humidity: {imageMetadata.RelativeHumidity} (&#37;)</p>
-                <p>Subject Distance: {imageMetadata.SubjectDistance} (m)</p>
+                <h3 className={classes.MetadataPanel__title}>Are these values correct?</h3>
+                <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
+                <p className={classes.MetadataPanel__element}>Emissivity : <span>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
+                {/* <p>IR Window Temperature: </span>{imageMetadata.IRWindowTemperature}</span> (&#8451;)</p>
+                <p className={classes.MetadataPanel__element}>IR Window Transmission: <span>{imageMetadata.IRWindowTransmission}</span></p>
+                <p className={classes.MetadataPanel__element}>Planck B: <span>{imageMetadata.PlanckB}</span></p>
+                <p className={classes.MetadataPanel__element}>Planck F: <span>{imageMetadata.PlanckF}</span></p>
+                <p className={classes.MetadataPanel__element}>Planck O: <span>{imageMetadata.PlanckO}</span></p>
+                <p className={classes.MetadataPanel__element}>Planck R1: <span>{imageMetadata.PlanckR1}</span></p>
+                <p className={classes.MetadataPanel__element}>Planck R2: <span>{imageMetadata.PlanckR2}</p></span> */}
+                <p className={classes.MetadataPanel__element}>Reflected Apparent Temperature: <span>{imageMetadata.ReflectedApparentTemperature}</span> (&#8451;)</p>
+                <p className={classes.MetadataPanel__element}>Relative Humidity: <span>{imageMetadata.RelativeHumidity}</span> (&#37;)</p>
+                <p className={classes.MetadataPanel__element}>Subject Distance: <span>{imageMetadata.SubjectDistance}</span> (m)</p>
                 <Button  btnType="Danger" clicked={toggleFormHandler}>Nope, lemme edit.</Button>
                 {!formOpen ? <Button  btnType="Success" clicked={metaDataSubmitHandler}>Yes, upload the image!</Button> : null}
             </div> 

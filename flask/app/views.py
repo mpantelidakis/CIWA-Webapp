@@ -65,12 +65,12 @@ class FileList(Resource):
 
 		# check if the post request has the file part
 		if 'file' not in request.files:
-			resp = jsonify({'msg' : 'No file part in the request'})
+			resp = jsonify({'error' : 'No file part in the request'})
 			resp.status_code = 400
 			return resp
 		file = request.files['file']
 		if file.filename == '':
-			resp = jsonify({'msg' : 'No file selected for uploading'})
+			resp = jsonify({'error' : 'No file selected for uploading'})
 			resp.status_code = 400
 			return resp
 		if file and allowed_file(file.filename):
@@ -142,7 +142,7 @@ class FileList(Resource):
 			resp.status_code = 201
 			return resp
 		else:
-			resp = jsonify({'msg' : 'Allowed file types are png, jpg, jpeg'})
+			resp = jsonify({'error' : 'Allowed file types are png, jpg, jpeg'})
 			resp.status_code = 400
 			return resp
 
@@ -151,7 +151,6 @@ class FileList(Resource):
 		files = dbfiles.find()
 		if files.count() == 0:
 			resp = jsonify({"msg":"No files found."})
-			print("No files found")
 			resp.status_code = 200
 			return resp
 

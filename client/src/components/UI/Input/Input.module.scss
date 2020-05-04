@@ -1,6 +1,7 @@
 .Input {
     width: 100%;
-    padding: 1rem;
+    flex: 0 0 30%;
+    position: relative;
 }
 
 .Label {
@@ -11,6 +12,7 @@
 
 .InputElement {
     outline: none;
+    text-align: center;
     border: 1px solid #ccc;
     background-color: white;
     font: inherit;
@@ -30,6 +32,15 @@
 }
 
 .ValidationError {
+    width: max-content;
+    display: block;
+    position: absolute;
     color: red;
-    margin: .5rem 0;
+    font-size: 1rem;
+
+    // transform:translateX(1.3rem) translateY(.9rem);
+
+    top:110%;
+    left:-160%;
+    transition: all .5s;
 } 

@@ -16,12 +16,89 @@
 }
 
 .MetadataPanel{
+
+    padding: 1.2rem 2rem 0 2rem;
+    background-color: rgb(235, 255, 213);
     display: block;
-    width: 36rem;
-    min-width: 30rem;
+    width: 40rem;
+    min-width: 40rem;
     margin: 0 auto;
+    margin-top: 3rem;
+    font-size: 1.4rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border: 2px solid rgba(0, 0, 0, 0.027) ;
+
+    &__title{
+        padding-bottom: 1.2rem;
+        display: block;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        color: #5C9210;
+        text-align: center;
+        margin-bottom: 1.2rem;
+    }
+
+    &__element{
+        font-size: 1.1rem;
+        text-align: center;
+        &:not(:last-of-type){
+            
+            margin-bottom: .3rem;
+        }
+        &:last-of-type{
+            
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    span{
+        margin-left: .2rem;
+        letter-spacing: .1rem;
+        color: red;
+        font-weight: bold;
+    }
 }
 
+.MetadataForm{
+    display: block;
+    margin: 0 auto;
+    margin-top: 2rem;
+    padding: 1.2rem 2rem 0 2rem;
+    width: 40rem;
+    min-width: 40rem;
+    font-size: 1.4rem;
+
+    &__title{
+        padding-bottom: 1.2rem;
+        display: block;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        color: #5C9210;
+        text-align: center;
+        margin-bottom: 1.2rem;
+    }
+
+    &__formField{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &:not(:nth-last-of-type(2)){
+            margin-bottom: 2rem;
+        }
+    }
+
+    &__InputFieldName{
+        color: #ffff;
+        // border: 1px solid #ccc;
+        padding: .75rem 1rem;
+        font-size: 1.3rem;
+        background-color: #5C9210;
+        flex: 0 0 70%;
+        text-align: center;
+        font-weight: bold;
+    }
+}
 .Buttons{
     display: flex;
     justify-content: center;
