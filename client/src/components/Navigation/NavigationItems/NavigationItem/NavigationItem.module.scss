@@ -1,15 +1,16 @@
 .NavigationItem {
     margin: 10px 0;
-    box-sizing: border-box;
     display: block;
     width: 100%;
+    min-width: 10rem;
+    width: max-content;
 
     & a {
         color: #BF5C2C;
         text-decoration: none;
         display: block;
         width: 100%;
-        box-sizing: border-box;
+        font-size: 14px;
 
         &:hover,
         &:active,
@@ -23,17 +24,20 @@
 @media (min-width: 500px) {
     .NavigationItem {
         margin: 0;
+        text-align: center;
         display: flex;
         height: 100%;
-        width: auto;
+        min-width: 10rem;
+        width: max-content;
         align-items: center;
 
         & a {
             color: white;
             height: 100%;
-            width: auto;
+            width: 100%;
             padding: 16px 10px;
             border-bottom: 4px solid transparent;
+            font-size: 14px;
 
             &:hover,
             &:active,

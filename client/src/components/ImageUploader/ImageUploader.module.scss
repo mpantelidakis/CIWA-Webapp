@@ -1,45 +1,63 @@
+
+
 .ImageUploader{
-    
     display: block;
-    width: 36rem;
-    min-width: 30rem;
+    width: 100%;
     margin: 0 auto;
 
+} 
+@media (min-width: 500px) {
+    .ImageUploader{
+        padding-top: 5rem;
+        display: block;
+        min-width: 40rem;
+        width: 30%;
+        margin: 0 auto;
+        max-height: 60%;
+    } 
 }
 
+
+
+
 .Message{
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+    border-top-left-radius: 4rem;
+    font-size: 1.6rem;
+    color: white;
+    min-height: 5rem;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
+    background-color:  rgb(43, 170, 12);
+    flex-wrap: wrap;
     max-width: inherit;
     word-wrap: break-word;
-    text-align: center;
 }
 
 .MetadataPanel{
 
     padding: 1.2rem 2rem 0 2rem;
-    background-color: rgb(235, 255, 213);
+    background-color: rgb(255, 255, 255);
     display: block;
-    width: 40rem;
     min-width: 40rem;
-    margin: 0 auto;
-    margin-top: 3rem;
+    width: 30%;
+    margin: 3rem auto;
     font-size: 1.4rem;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
-    border: 2px solid rgba(0, 0, 0, 0.027) ;
+    border: 2px solid rgba(246, 246, 246, 0.027) ;
+    margin-bottom: 3rem;
+
 
     &__title{
         padding-bottom: 1.2rem;
         display: block;
         border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-        color: #5C9210;
+        color: dodgerblue;
         text-align: center;
         margin-bottom: 1.2rem;
     }
 
     &__element{
-        font-size: 1.1rem;
+        font-size: 1.5rem;
         text-align: center;
         &:not(:last-of-type){
             
@@ -49,13 +67,14 @@
             
             padding-bottom: 1.2rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
         }
     }
 
     span{
         margin-left: .2rem;
         letter-spacing: .1rem;
-        color: red;
+        color: dodgerblue;
         font-weight: bold;
     }
 }
@@ -63,25 +82,25 @@
 .MetadataForm{
     display: block;
     margin: 0 auto;
-    margin-top: 2rem;
     padding: 1.2rem 2rem 0 2rem;
-    width: 40rem;
     min-width: 40rem;
+    width: 30%;
     font-size: 1.4rem;
+    margin-bottom: 5rem;
 
     &__title{
+        font-size: 1.6rem;
         padding-bottom: 1.2rem;
         display: block;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
         color: #5C9210;
         text-align: center;
-        margin-bottom: 1.2rem;
     }
 
     &__formField{
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 2rem;
 
         &:not(:nth-last-of-type(2)){
             margin-bottom: 2rem;
@@ -102,37 +121,39 @@
 .Buttons{
     display: flex;
     justify-content: center;
+    width: 100%;
+    height: 4.2rem;
 }
 
 .Btn{
+    outline: none;
     border: .2rem solid black;
     background-color: white;
     color: black;
-    padding: .5rem 2rem;
     cursor: pointer;
-    border-radius: .3rem;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     transition: all .25s ease-in-out;
+    width: 50%;
 
     &:disabled{
         cursor: not-allowed;
     }
 
     &__Select{
-        border-color: #2196F3;
-        color: dodgerblue;
-        margin-right: 1.5rem;
+        border-color: rgb(43, 170, 12);
+        color: rgb(43, 170, 12);
+        // margin-right: 1.5rem;
 
         &:hover {
-            background: #2196F3;
+            background: rgb(43, 170, 12);
             color: white;
         }
     }
 
     &__Upload{
-        background: #2196F3;
+        background: rgb(43, 170, 12);
         color: white;
-        border-color: #2196F3;
+        border-color: rgb(43, 170, 12);
         transition: all .2s ease-in-out;
         
         &:hover {
@@ -143,28 +164,6 @@
         &:active {
             transform: scale(1.01);
             box-shadow: .8rem .8rem 2rem rgba(128, 128, 128, 0.603);
-        }
-    }
-
-    &__Apply{
-        border-color: #2196F3;
-        color: dodgerblue;
-        margin-right: 1.5rem;
-
-        &:hover {
-            background: #2196F3;
-            color: white;
-        }
-    }
-
-    &__Cancel{
-        border-color: #2196F3;
-        color: dodgerblue;
-        margin-right: 1.5rem;
-
-        &:hover {
-            background: #2196F3;
-            color: white;
         }
     }
 }

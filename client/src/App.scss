@@ -11,12 +11,12 @@ html {
   /*Set a universal font-size for the browser so that we can use rem*/
   /* We set it in percentage because we want to the user to be able to change the browser's
     default font size. 16*0.625 = 10 */ }
-  @media only screen and (max-width: 75em) {
-    html {
-      font-size: 56.25%; } }
-  @media only screen and (max-width: 56.25rem) {
-    html {
-      font-size: 50%; } }
+  // @media only screen and (max-width: 75em) {
+  //   html {
+  //     font-size: 56.25%; } }
+  // @media only screen and (max-width: 56.25rem) {
+  //   html {
+  //     font-size: 50%; } }
   @media only screen and (min-width: 112.5em) {
     html {
       font-size: 75%; } 

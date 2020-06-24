@@ -1,14 +1,18 @@
 .Button {
-    background-color: transparent;
-    display: inline-block;
-    border: none;
-    color: white;
     outline: none;
+    border: .2rem solid black;
+    background-color: white;
+    padding: 1rem 0;
+    color: black;
     cursor: pointer;
     font: inherit;
-    padding: 1.2rem;
-    margin: 1rem;
-    font-weight: bold;
+    font-size: 1.4rem;
+    transition: all .25s ease-in-out;
+    width: 50%;
+
+    &:disabled{
+        cursor: not-allowed;
+    }
 }
 
 // .Button:first-of-type {
@@ -17,11 +21,31 @@
 // }
 
 .Success {
-    color: #5C9210;
+    background: rgb(43, 170, 12);
+    color: white;
+    border-color: rgb(43, 170, 12);
+    transition: all .2s ease-in-out;
+    
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 1rem 1rem 2rem rgba(128, 128, 128, 0.308);
+    }
+
+    &:active {
+        transform: scale(1.01);
+        box-shadow: .8rem .8rem 2rem rgba(128, 128, 128, 0.603);
+    }
 }
 
 .Danger {
-    color: #944317;
+    border-color: rgb(43, 170, 12);
+        color: rgb(43, 170, 12);
+        // margin-right: 1.5rem;
+
+        &:hover {
+            background: rgb(43, 170, 12);
+            color: white;
+        }
 }
 
 .Button:disabled {

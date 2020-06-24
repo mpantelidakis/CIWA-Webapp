@@ -1,5 +1,5 @@
 import React, {useState, useRef, Fragment} from 'react';
-import axios from 'axios'
+import axios from '../../axios-orders'
 
 import ImagePreview from '../ImagePreview/ImagePreview'
 
@@ -127,11 +127,12 @@ const ImageUploader = props => {
     const [formOpen, setFormOpen] = useState(false);
 
     const fileSelectedHandler = (event) => {
-        console.log(event.target.files[0]);
-        setFile(event.target.files[0]);
-        setImageMetadata(null)
-        if (props.withPreview)
-            setFilePreviewUrl(URL.createObjectURL(event.target.files[0]))
+        if(event.target.files[0]){
+            setFile(event.target.files[0]);
+            setImageMetadata(null)
+            if (props.withPreview)
+                setFilePreviewUrl(URL.createObjectURL(event.target.files[0]))
+        }
     }
 
     const syncForm = (dict) => {
@@ -151,7 +152,7 @@ const ImageUploader = props => {
         const fd = new FormData();
         fd.append('file', file)
    
-        axios.post('http://localhost:5000/api/files', fd, {
+        axios.post('/api/files', fd, {
             onUploadProgress: ProgressEvent => {
                 // console.log('Upload Progress: ' + Math.round(ProgressEvent.loaded / ProgressEvent.total *100) + '%')
             }
@@ -204,7 +205,7 @@ const ImageUploader = props => {
 
         // The file of the formdata will be available under request.files
         // The metadata of the formdata will be available under request.form.get('metadata)
-        axios.post('http://localhost:5000/api/files', fd, {
+        axios.post('/api/files', fd, {
 
         })
         .then(res => {
@@ -286,8 +287,10 @@ const ImageUploader = props => {
         <div className={classes.ImageUploader}>
             {file ? 
             <Fragment>
-            <p className={classes.Message}><strong>Will be uploaded: &nbsp; </strong>{file.name}</p>
-            <p className={classes.Message}><strong>File size: &nbsp; </strong>{(file.size/(1024)).toFixed(2)} KBs</p>
+            <div className={classes.Message}>
+                <p><strong>Will be uploaded: </strong>{file.name}</p>
+                <p><strong>File size: </strong>{(file.size/(1024)).toFixed(2)} KBs</p>
+            </div>
             </Fragment>: 
             <p className={classes.Message}>Please select an image to upload</p>}
             <ImagePreview Url={filePreviewUrl}/>
