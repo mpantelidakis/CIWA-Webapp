@@ -149,11 +149,6 @@ class FileList(Resource):
 	def get(self):
 		
 		files = dbfiles.find()
-		if files.count() == 0:
-			resp = jsonify({"msg":"No files found."})
-			resp.status_code = 200
-			return resp
-
 		x = []
 		for item in files:
 			# if id must be kept, use bson.json util
@@ -169,8 +164,8 @@ class File(Resource):
 	# Used to get a specific image details
 	def get(self, filename):
 		files = dbfiles.find_one({"file_name": filename})
-		files.pop('_id') # _id is not json serializable
 		if files:
+			files.pop('_id') # _id is not json serializable
 			resp = jsonify(files)
 			resp.status_code = 200
 			return resp

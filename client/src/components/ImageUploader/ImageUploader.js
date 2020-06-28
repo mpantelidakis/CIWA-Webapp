@@ -1,5 +1,6 @@
 import React, {useState, useRef, Fragment} from 'react';
 import axios from '../../axios-orders'
+import { withRouter } from 'react-router-dom'
 
 import ImagePreview from '../ImagePreview/ImagePreview'
 
@@ -211,9 +212,9 @@ const ImageUploader = props => {
         .then(res => {
 
             // console.log(res.data.metadata)
-            setImageMetadata(res.data.metadata)
-            console.log(res.data.msg)
-
+            setImageMetadata(res.data.metadata);
+            console.log(res.data.msg);
+            props.history.push('/images');
         })
     }
 
@@ -332,4 +333,4 @@ const ImageUploader = props => {
     )
 }
 
-export default withErrorHandler(ImageUploader, axios)
+export default withRouter(withErrorHandler(ImageUploader, axios))

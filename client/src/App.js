@@ -5,15 +5,20 @@ import './App.scss';
 
 import Layout from './containers/Layout/Layout'
 import ImageUploader from "./components/ImageUploader/ImageUploader";
+import asyncComponent from './hoc/asyncComponent/asyncComponent'
 
 
+const asyncImageList = asyncComponent(() => {
+  return import('./components/ImageList/ImageList')
+})
 
 
 function App() {
     
   let routes = (
     <Switch>
-      <Route path="/upload" exact component={() => <ImageUploader withPreview/>} />
+      <Route path="/upload" component={() => <ImageUploader withPreview/>} />
+      <Route path="/images" component={asyncImageList}/>
       <Redirect to="/"/>
     </Switch>
   )
