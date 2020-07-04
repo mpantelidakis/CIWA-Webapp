@@ -4,8 +4,8 @@
     // height: 70vh;
     flex-wrap: wrap;
     // align-items: space-between;
-    margin-bottom: 2rem;
-    padding-top: 7rem;
+    // margin-bottom: 2rem;
+    padding: 5rem 2rem;
 }
 
 .Pagination{
@@ -23,7 +23,7 @@
 
 @media only screen and (max-width: 500px)  {
     .ImageList{
-        padding-top: 3rem;
+        padding: 3rem 1rem;
     }
 }
 

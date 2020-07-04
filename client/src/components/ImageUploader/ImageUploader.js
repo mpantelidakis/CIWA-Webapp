@@ -14,6 +14,8 @@ import { updateObject, checkValidity } from '../../shared/utility'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 
 import { AwesomeButton, AwesomeButtonProgress } from "react-awesome-button";
+import { Link, animateScroll as scroll } from "react-scroll";
+
 import "react-awesome-button/src/styles/styles.scss";
 
 import "../UI/btn-awsome-style.scss"
@@ -249,7 +251,7 @@ const ImageUploader = props => {
     }
 
     let form = (
-        <div className={classes.MetadataForm}>
+        <div className={classes.MetadataForm} id='#metaForm'>
             <h4 className={classes.MetadataForm__title}>Please edit the incorrect values</h4>
             <form onSubmit={(e) => {
                             syncMetadataFromForm(e)
@@ -271,14 +273,17 @@ const ImageUploader = props => {
                         </div>
                 ))}
                 <div className={classes.Buttons}>
+                
                     <AwesomeButton
                         // cssModule={btnClass}
                         type="secondary"
                         ripple
+                        
                         onPress={toggleFormHandler}
                         >
                         Cancel
                     </AwesomeButton>
+               
                     <AwesomeButton
                         // cssModule={btnClass}
                         type="primary"
@@ -297,6 +302,7 @@ const ImageUploader = props => {
 
     return (
         <Fragment>
+           
         <div className={classes.ImageUploader}>
             {file ? 
             <Fragment>
@@ -350,7 +356,7 @@ const ImageUploader = props => {
             </div>
         </div>
         {imageMetadata ?  
-            <div className={classes.MetadataPanel}>
+            <div className={classes.MetadataPanel} id="#metadataPanel">
                 <h3 className={classes.MetadataPanel__title}>Are these values correct?</h3>
                 <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span className={classes.metaSpan}>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
                 <p className={classes.MetadataPanel__element}>Emissivity : <span className={classes.metaSpan}>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
@@ -365,14 +371,28 @@ const ImageUploader = props => {
                 <p className={classes.MetadataPanel__element}>Relative Humidity: <span className={classes.metaSpan}>{imageMetadata.RelativeHumidity}</span> (&#37;)</p>
                 <p className={classes.MetadataPanel__element}>Subject Distance: <span className={classes.metaSpan}>{imageMetadata.SubjectDistance}</span> (m)</p>
                 <div className={classes.Buttons}>
-                    <AwesomeButton
-                        // cssModule={btnClass}
-                        type="secondary"
-                        ripple
-                        onPress={toggleFormHandler}
-                        >
-                        No, let me edit
-                    </AwesomeButton>
+                    <Link
+                        activeClass="active"
+                        to="#metaForm"
+                        spy={true}
+                        smooth={true}
+                        offset={0}
+                        duration={1000}
+                        isDynamic
+
+                    >  
+                        <AwesomeButton
+                            // cssModule={btnClass}
+                            type="secondary"
+                            ripple
+                            disabled={formOpen}
+                            onPress={toggleFormHandler}
+                            style = {{width: '100%'}}
+                            >
+                            No, let me edit
+                        </AwesomeButton>
+                    </Link>
+                  
                     {!formOpen ?  <AwesomeButtonProgress
                         // cssModule={AwesomeButtonStyles}
                         type="primary"

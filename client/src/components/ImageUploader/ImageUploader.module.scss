@@ -2,15 +2,19 @@
 
 .ImageUploader{
     display: block;
+    
+    padding: 0 1rem;
+    padding-top: 5rem;
     width: 100%;
     margin: 0 auto;
+    min-width: 45rem;
 
 } 
 @media (min-width: 500px) {
     .ImageUploader{
         padding-top: 5rem;
         display: block;
-        min-width: 40rem;
+        min-width: 45rem;
         width: 30%;
         margin: 0 auto;
         max-height: 60%;
@@ -22,6 +26,7 @@
 
 .Message{
     border-top-left-radius: 4rem;
+    padding : 1rem 3rem;
     font-size: 1.6rem;
     color: white;
     min-height: 5rem;
@@ -39,7 +44,7 @@
     padding: 1.2rem 2rem 0 2rem;
     background-color: rgb(255, 255, 255);
     display: block;
-    min-width: 40rem;
+    min-width: 45rem;
     width: 30%;
     margin: 3rem auto;
     font-size: 1.4rem;
@@ -83,7 +88,7 @@
     display: block;
     margin: 0 auto;
     padding: 1.2rem 2rem 0 2rem;
-    min-width: 40rem;
+    min-width: 45rem;
     width: 30%;
     font-size: 1.4rem;
     margin-bottom: 5rem;

@@ -3,6 +3,8 @@ import axios from '../../axios-orders'
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/src/styles/styles.scss";
 
+import { Circle, Heart, Orbitals, Ouroboro, Roller, Spinner, Ripple, Ring } from 'react-spinners-css';
+
 import "../UI/btn-awsome-style.scss"
 
 import Images from './Images/Images'
@@ -32,6 +34,8 @@ const ImageList = props => {
             //The interceptor of the hoc handles the exception
         })
     }, [])
+
+    const loader =  <Spinner style={{marginTop:"20%"}}color="#0fa35e"/>
 
     const prevBtnDisabled = () => {
         if (prevUrl['offset'] === 'None' ){
@@ -73,13 +77,18 @@ const ImageList = props => {
     }else{
         images = imageList.map((file, idx) => {
             return (
-                <Images filename={file.file_name} metadata={file.metadata}  key={idx + 1}/>
+                <Images loader={loader} filename={file.file_name} metadata={file.metadata}  key={idx + 1}/>
             )
         })
     }
 
     return (
         <Fragment>
+            {/* <Ouroboro color="#0fa35e" />
+            <Roller color="#0fa35e" />
+            <Spinner color="#0fa35e" />
+            <Ring color="#0fa35e" />
+            <Ripple color="#0fa35e" /> */}
             <div className={classes.ImageList}>
             {/* <h1>Uploaded Images</h1> */}
                 {images}
