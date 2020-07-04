@@ -4,6 +4,7 @@ from flask_restful import Api
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
+# TODO Provide this as an environment variable
 UPLOAD_FOLDER = '/vol/web/media/'
 
 app = Flask(__name__)

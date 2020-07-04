@@ -48,8 +48,7 @@ RUN pip install -r requirements.txt
 # We copy the rest of the codebase into the image
 COPY . .
 
-# TODO share this volume with nginx
-RUN mkdir -p /vol/web/media
+RUN mkdir -p /vol/web/media/Flir_Images /vol/web/media/Visual_Images /vol/web/media/Thermal_Images
 
 # Finally, we run uWSGI with the ini file we
 # created earlier

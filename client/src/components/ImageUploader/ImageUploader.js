@@ -9,10 +9,14 @@ import classes from './ImageUploader.module.scss'
 import noPreview from "../../assets/images/no-preview.jpg"
 
 import Input from '../../components/UI/Input/Input'
-import Button from '../../components/UI/Button/Button'
 import { updateObject, checkValidity } from '../../shared/utility'
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
+
+import { AwesomeButton, AwesomeButtonProgress } from "react-awesome-button";
+import "react-awesome-button/src/styles/styles.scss";
+
+import "../UI/btn-awsome-style.scss"
 
 
 const ImageUploader = props => {
@@ -136,6 +140,18 @@ const ImageUploader = props => {
         }
     }
 
+    const syncMetadataFromForm = (event) => {
+        if (event && event.preventDefault)
+        event.preventDefault();
+
+        const metadata = {}
+        for (let formElementIdentifier in metaform){
+            metadata[formElementIdentifier] = metaform[formElementIdentifier].value
+        }
+        setImageMetadata(metadata)
+        toggleFormHandler()
+    }
+
     const syncForm = (dict) => {
         for (let key in dict){
             if(metadataConfig[key]){
@@ -179,16 +195,8 @@ const ImageUploader = props => {
 
     const inputEl = useRef(null);
 
-    const classBtnSelect = [classes.Btn, classes.Btn__Select].join(' ');
-    const classbtnUpload = [classes.Btn, classes.Btn__Upload].join(' ');
-    const classBtnApply = [classes.Btn, classes.Btn__Apply].join(' ');
-    const classBtnCancel = [classes.Btn, classes.Btn__Cancel].join(' ');
-
-    const metaDataSubmitHandler = (event) => {
-        // The default is to send out a request
-        // which in turn reloads the form
-        event.preventDefault()
-
+    const generateMetaFormData = () => {
+     
         const metadata = {}
         for (let formElementIdentifier in metaform){
             metadata[formElementIdentifier] = String(metaform[formElementIdentifier].value)
@@ -206,17 +214,11 @@ const ImageUploader = props => {
 
         // The file of the formdata will be available under request.files
         // The metadata of the formdata will be available under request.form.get('metadata)
-        axios.post('/api/files', fd, {
 
-        })
-        .then(res => {
-
-            // console.log(res.data.metadata)
-            setImageMetadata(res.data.metadata);
-            console.log(res.data.msg);
-            props.history.push('/images');
-        })
+        return fd
     }
+
+    
 
     const inputChangedHandler = (event, inputIdentifier) => {
        
@@ -249,7 +251,9 @@ const ImageUploader = props => {
     let form = (
         <div className={classes.MetadataForm}>
             <h4 className={classes.MetadataForm__title}>Please edit the incorrect values</h4>
-            <form onSubmit={metaDataSubmitHandler}>
+            <form onSubmit={(e) => {
+                            syncMetadataFromForm(e)
+                          }}>
                 {formElementsArray.map(formElement => (
                         <div className={classes.MetadataForm__formField}key={formElement.id}>
                         <p className={classes.MetadataForm__InputFieldName}>{formElement.id}</p>
@@ -267,17 +271,25 @@ const ImageUploader = props => {
                         </div>
                 ))}
                 <div className={classes.Buttons}>
-                    <Button 
-                        btnType="Danger"
-                        clicked={toggleFormHandler}>
-                            Cancel
-                    </Button>
-                    <Button 
-                        btnType="Success"
+                    <AwesomeButton
+                        // cssModule={btnClass}
+                        type="secondary"
+                        ripple
+                        onPress={toggleFormHandler}
+                        >
+                        Cancel
+                    </AwesomeButton>
+                    <AwesomeButton
+                        // cssModule={btnClass}
+                        type="primary"
+                        ripple
                         disabled={!formIsValid}
-                        clicked={metaDataSubmitHandler}>
-                            Apply changes and upload!
-                    </Button>
+                        onPress={(e) => {
+                            syncMetadataFromForm(e)
+                          }}
+                        >
+                        Apply changes
+                    </AwesomeButton>
                 </div>
             </form>
         </div>
@@ -303,17 +315,45 @@ const ImageUploader = props => {
             onChange={fileSelectedHandler}
             ref={inputEl}/>
             <div className={classes.Buttons}>
-                {file ? <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select another image</button> : 
-                <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select an image</button>}
-                <button className={classbtnUpload} disabled={!isDisabled()} onClick={checkMetadataHandler}>Extract metadata</button>
+                {/* {file ? <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select another image</button> : 
+                <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select an image</button>} */}
+                {file ? <AwesomeButton
+                        // cssModule={btnClass}
+                        type="secondary"
+                        ripple
+                        size="large"
+                        onPress={() => inputEl.current.click()}
+                        >
+                        Select another image
+                </AwesomeButton>:
+                <AwesomeButton
+                        // cssModule={btnClass}
+                        type="secondary"
+                        ripple
+                        size="large"
+                        onPress={() => inputEl.current.click()}
+                        >
+                        Select an image
+                </AwesomeButton>}
+                {/* <button className={classbtnUpload} disabled={!isDisabled()} onClick={checkMetadataHandler}>Extract metadata</button> */}
+                <AwesomeButton
+                        // cssModule={btnClass}
+                        type="primary"
+                        ripple
+                        size="large"
+                        disabled={!isDisabled()}
+                        onPress={checkMetadataHandler}
+                        >
+                        Extract metadata
+                </AwesomeButton>
                 
             </div>
         </div>
         {imageMetadata ?  
             <div className={classes.MetadataPanel}>
                 <h3 className={classes.MetadataPanel__title}>Are these values correct?</h3>
-                <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
-                <p className={classes.MetadataPanel__element}>Emissivity : <span>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
+                <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span className={classes.metaSpan}>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
+                <p className={classes.MetadataPanel__element}>Emissivity : <span className={classes.metaSpan}>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
                 {/* <p>IR Window Temperature: </span>{imageMetadata.IRWindowTemperature}</span> (&#8451;)</p>
                 <p className={classes.MetadataPanel__element}>IR Window Transmission: <span>{imageMetadata.IRWindowTransmission}</span></p>
                 <p className={classes.MetadataPanel__element}>Planck B: <span>{imageMetadata.PlanckB}</span></p>
@@ -321,11 +361,43 @@ const ImageUploader = props => {
                 <p className={classes.MetadataPanel__element}>Planck O: <span>{imageMetadata.PlanckO}</span></p>
                 <p className={classes.MetadataPanel__element}>Planck R1: <span>{imageMetadata.PlanckR1}</span></p>
                 <p className={classes.MetadataPanel__element}>Planck R2: <span>{imageMetadata.PlanckR2}</p></span> */}
-                <p className={classes.MetadataPanel__element}>Reflected Apparent Temperature: <span>{imageMetadata.ReflectedApparentTemperature}</span> (&#8451;)</p>
-                <p className={classes.MetadataPanel__element}>Relative Humidity: <span>{imageMetadata.RelativeHumidity}</span> (&#37;)</p>
-                <p className={classes.MetadataPanel__element}>Subject Distance: <span>{imageMetadata.SubjectDistance}</span> (m)</p>
-                <Button  btnType="Danger" clicked={toggleFormHandler}>Nope, lemme edit.</Button>
-                {!formOpen ? <Button  btnType="Success" clicked={metaDataSubmitHandler}>Yes, upload the image!</Button> : null}
+                <p className={classes.MetadataPanel__element}>Reflected Apparent Temperature: <span className={classes.metaSpan}>{imageMetadata.ReflectedApparentTemperature}</span> (&#8451;)</p>
+                <p className={classes.MetadataPanel__element}>Relative Humidity: <span className={classes.metaSpan}>{imageMetadata.RelativeHumidity}</span> (&#37;)</p>
+                <p className={classes.MetadataPanel__element}>Subject Distance: <span className={classes.metaSpan}>{imageMetadata.SubjectDistance}</span> (m)</p>
+                <div className={classes.Buttons}>
+                    <AwesomeButton
+                        // cssModule={btnClass}
+                        type="secondary"
+                        ripple
+                        onPress={toggleFormHandler}
+                        >
+                        No, let me edit
+                    </AwesomeButton>
+                    {!formOpen ?  <AwesomeButtonProgress
+                        // cssModule={AwesomeButtonStyles}
+                        type="primary"
+                        ripple
+                        onPress={(e, next) => {
+                            
+                            const fd = generateMetaFormData()
+                            axios.post('/api/files', fd, {
+
+                            })
+                            .then(res => {
+                    
+                                console.log(res.data.metadata);
+                                setImageMetadata(res.data.metadata);
+                                console.log(res.data.msg);
+                                next();
+                                // props.history.push('/images');
+                            })
+                            
+                        }}
+                        >
+                        Yes, upload the image
+                    </AwesomeButtonProgress>: null}
+                </div>
+                
             </div> 
         : null}
         {formOpen ? form : null}

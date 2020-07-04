@@ -5,12 +5,13 @@ from app import app
 from flask import Flask, request, redirect, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
-from scripts.metadata_extractor import FlirImageExtractor
+from scripts.FlirImageExtractor import FlirImageExtractor
 
 from app import mongo
 
 from app import api
 from flask_restful import Resource
+from flask_pymongo import pymongo
 
 import pprint
 
@@ -35,8 +36,7 @@ def extract_metadata(file_path):
 	metadata_dictionary = fie.extract_metadata(file_path)
 	return metadata_dictionary
 
-def modify_metadata(file_path, metadata):
-	fie = FlirImageExtractor(is_debug = True, provided_metadata=metadata)
+def modify_metadata(file_path, fie):
 	metadata_dictionary = fie.modify_metadata(file_path)
 	return metadata_dictionary
 
@@ -77,13 +77,14 @@ class FileList(Resource):
 			filename = secure_filename(file.filename)
 			
 			# Create the path to save the file
-			save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+			save_path = os.path.join(app.config['UPLOAD_FOLDER'],'Flir_Images', filename)
 
 			# Save the file to our local storage
 			file.save(save_path)
 
 			# Get the metadata part of the multipart-form
 			metadata = request.form.get('metadata')
+			pprint.pprint(metadata)
 		
 			if metadata:
 				# Parse the data and create a Json object
@@ -92,7 +93,10 @@ class FileList(Resource):
 				print(json_meta)
 
 				# Extract and modify the image metadata and return a dictionary
-				metadata_dictionary = modify_metadata(save_path, json_meta)
+				fie = FlirImageExtractor(is_debug = True, provided_metadata=json_meta)
+				metadata_dictionary = modify_metadata(save_path, fie)
+				fie.process_image(save_path)
+				fie.save_images()
 
 			else:
 				# Extract the image metadata and return a dictionary
@@ -148,17 +152,24 @@ class FileList(Resource):
 
 	def get(self):
 		
-		files = dbfiles.find()
-		x = []
-		for item in files:
-			# if id must be kept, use bson.json util
-			item.pop('_id') # _id is not json serializable
-			x.append(item)
-			pprint.pprint(item)
+		# files = dbfiles.find()
+		# x = []
+		# for item in files:
+		# 	# if id must be kept, use bson.json util
+		# 	item.pop('_id') # _id is not json serializable
+		# 	x.append(item)
+		# 	# pprint.pprint(item)
 
-		resp = jsonify(x)
+		offset = int(request.args['offset'])
+		limit = int(request.args['limit'])
+
+		resp = paginate(offset, limit)
 		resp.status_code = 200
 		return resp
+
+		# resp = jsonify(x)
+		# resp.status_code = 200
+		# return resp
 
 class File(Resource):
 	# Used to get a specific image details
@@ -183,8 +194,49 @@ def collect_metadata(file_path):
 	metadata_dictionary = fie.process_image(file_path)
 	return metadata_dictionary
 
+def paginate(offset, limit):
 
-@app.route('/uploads/<filename>', methods=['GET'])
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+	total_files = dbfiles.find().count()
+
+	offset = 0 if offset <0 or offset >total_files else offset
+
+	
+	print(total_files)
+
+	output = []
+
+	if total_files>0:
+		starting_id = dbfiles.find().sort('_id', pymongo.ASCENDING)
+		last_id = starting_id[offset]['_id']
+
+		images = dbfiles.find({'_id' : {'$gte' : last_id}}).sort('_id', pymongo.ASCENDING).limit(limit)
+
+		
+		for image in images:
+			image.pop('_id') # _id is not json serializable
+			output.append(image)
+	
+	next_url = {
+		"offset": str(None if offset + limit>=total_files or total_files==0 else offset+limit),
+		"limit": str(limit)
+	}
+	previous_url = {
+		"offset": str(None if offset-limit<0 or total_files==0 else offset-limit),
+		"limit": str(limit)
+	}
+	print("Previous Url:{}".format(previous_url))
+	print("Next Url:{}".format(next_url))
+
+	return jsonify({'result' : output, 'prev_url' : previous_url, 'next_url': next_url})
+
+@app.route('/images/<filename>', methods=['GET'])
+def get_image(filename):
+	"""
+	Returns an image from the media folder, given the type of the image
+	Expects query param 'type' and the file name in the body of the request
+	"""
+	typeOfImage = request.args.get('type')
+	# print(typeOfImage)
+	# print(app.config['UPLOAD_FOLDER'])
+	# print(filename)
+	return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],typeOfImage),filename)

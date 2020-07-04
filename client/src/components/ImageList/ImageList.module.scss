@@ -1,0 +1,47 @@
+.ImageList{
+    display : flex;
+    justify-content: space-evenly;
+    // height: 70vh;
+    flex-wrap: wrap;
+    // align-items: space-between;
+    margin-bottom: 2rem;
+    padding-top: 7rem;
+}
+
+.Pagination{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    &>*{
+        &:not(:last-child){
+            margin-right: 1.5rem;
+        }
+    }
+
+}
+
+@media only screen and (max-width: 500px)  {
+    .ImageList{
+        padding-top: 3rem;
+    }
+}
+
+// .Previous{
+//     background-color: green;
+//     margin-right: 5rem;
+// }
+
+// .Next{
+//     background-color: red;
+// }
+
+// .Page{
+//     text-align: center;
+//     background-color: rgb(0, 255, 255);
+//     // border-radius: 3rem;
+// }
+
+// .PageActive{
+//     background-color: darkblue;
+// }

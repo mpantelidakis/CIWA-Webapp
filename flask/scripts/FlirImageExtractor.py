@@ -33,19 +33,20 @@ class FlirImageExtractor:
         self.provided_metadata= provided_metadata
         self.updated_metadata = None
 
-        self.is_debug_number_of_images = 0
-        self.is_debug_number_of_images_with_metadata = 0
+        # self.is_debug_number_of_images = 0
+        # self.is_debug_number_of_images_with_metadata = 0
         self.flir_img_filename = ""
-        self.subfolder_name = ""
-        self.image_suffix = "_rgb_image.jpg"
-        self.thumbnail_suffix = "_rgb_thumb.jpg"
-        self.downscaled_image_suffix = "_rgb_image_downscaled.jpg"
-        self.cropped_image_suffix = "_rgb_image_cropped.jpg"
-        self.thermal_suffix = "_thermal.png"
-        self.csv_suffix = "_thermal_values.csv"
+        # # self.subfolder_name = ""
+        # self.image_suffix = "_rgb_image.jpg"
+        # self.thumbnail_suffix = "_rgb_thumb.jpg"
+        # self.downscaled_image_suffix = "_rgb_image_downscaled.jpg"
+        # self.visual_immage_suffix = "_visual_image.jpg"
+        # self.thermal_suffix = "_thermal.png"
+        # self.csv_suffix = "_thermal_values.csv"
         
         # valid for PNG thermal images
         self.use_thumbnail = False
+
         self.fix_endian = True
 
         self.rgb_image_np = None
@@ -57,7 +58,6 @@ class FlirImageExtractor:
         self.default_distance = 15.24
         self.at = None
         self.rh = None
-        self.metadata_in_file = False
 
     pass
 
@@ -67,7 +67,7 @@ class FlirImageExtractor:
 
         self.flir_img_filename = flir_img_filename
         if self.is_debug:
-            print("INFO Flir image filepath:{}".format(flir_img_filename))
+            print("DEBUG: Extracting metadata from Flir image in filepath:{}".format(flir_img_filename))
 
         if not os.path.isfile(flir_img_filename):
             raise ValueError("Input file does not exist or this user don't have permission on this file")
@@ -85,13 +85,14 @@ class FlirImageExtractor:
         self.extracted_metadata = self.extract_metadata(flir_img_filename)
 
         if self.extracted_metadata and self.provided_metadata:
-            print("Extracted Metadata:{}".format(self.extracted_metadata))
-            print("Provided Metadata:{}".format(self.provided_metadata))
+            # print("Extracted Metadata:{}".format(self.extracted_metadata))
+            # print("Provided Metadata:{}".format(self.provided_metadata))
 
             self.updated_metadata = {k: self.provided_metadata.get(k, v) for k, v in self.extracted_metadata.items()}
 
-            print("Updated Metadata:{}".format(self.updated_metadata))
-
+            if self.is_debug:
+                print("DEBUG: Updated Metadata:{}".format(self.updated_metadata))
+            
             return self.updated_metadata
     
 
@@ -102,9 +103,11 @@ class FlirImageExtractor:
         :param flir_img_filename:
         :return:
         """
-        if self.is_debug:
-            print("INFO Flir image filepath:{}".format(flir_img_filename))
 
+        if self.is_debug:
+            print("DEBUG: Will reconstruct images and generate temperatures for Flir image with filepath:{}".format(flir_img_filename))
+            
+        print("Processing...")
         if not os.path.isfile(flir_img_filename):
             raise ValueError("Input file does not exist or this user don't have permission on this file")
 
@@ -148,8 +151,10 @@ class FlirImageExtractor:
         extracts the visual image as 2D numpy array of RGB values
         """
         image_tag = "-EmbeddedImage"
-        if self.use_thumbnail:
-            image_tag = "-ThumbnailImage"
+        # if self.use_thumbnail:
+        #     image_tag = "-ThumbnailImage"
+
+        print("Extracting the visual image")
 
         visual_img_bytes = subprocess.check_output([self.exiftool_path, image_tag, "-b", self.flir_img_filename])
         visual_img_stream = io.BytesIO(visual_img_bytes)
@@ -166,13 +171,18 @@ class FlirImageExtractor:
 
         # read image metadata needed for conversion of the raw sensor values
         # E=1,SD=1,RTemp=20,ATemp=RTemp,IRWTemp=RTemp,IRT=1,RH=50,PR1=21106.77,PB=1501,PF=1,PO=-7340,PR2=0.012545258
-        meta_json = subprocess.check_output(
-            [self.exiftool_path, self.flir_img_filename, '-Emissivity', '-SubjectDistance', '-AtmosphericTemperature',
-             '-ReflectedApparentTemperature', '-IRWindowTemperature', '-IRWindowTransmission', '-RelativeHumidity',
-             '-PlanckR1', '-PlanckB', '-PlanckF', '-PlanckO', '-PlanckR2', '-j'])
-        meta = json.loads(meta_json.decode())[0]
+        # meta_json = subprocess.check_output(
+        #     [self.exiftool_path, self.flir_img_filename, '-Emissivity', '-SubjectDistance', '-AtmosphericTemperature',
+        #      '-ReflectedApparentTemperature', '-IRWindowTemperature', '-IRWindowTransmission', '-RelativeHumidity',
+        #      '-PlanckR1', '-PlanckB', '-PlanckF', '-PlanckO', '-PlanckR2', '-j'])
+        # metamock = json.loads(meta_json.decode())[0]
 
-        self.meta = meta
+        meta = self.updated_metadata
+
+        # print("This is the metadata that will be used to calculate temperatures:")
+        # print(meta)
+        # print("This is the old metadata")
+        # print(meta)
         
         # exifread can't extract the embedded thermal image, use exiftool instead
         thermal_img_bytes = subprocess.check_output([self.exiftool_path, "-RawThermalImage", "-b", self.flir_img_filename])
@@ -181,48 +191,31 @@ class FlirImageExtractor:
         thermal_img = Image.open(thermal_img_stream)
         thermal_np = np.array(thermal_img)
 
-        # raw values -> temperature
         subject_distance = self.default_distance
         
-        # Distance is wrong in our metadata, uncomment lines below when it is fixed
-        #if 'SubjectDistance' in meta:
-            #subject_distance = FlirImageExtractor.extract_float(meta['SubjectDistance'])
+        if 'SubjectDistance' in meta:
+            subject_distance = FlirImageExtractor.extract_float(meta['SubjectDistance'])
 
         if self.fix_endian:
             # fix endianness, the bytes in the embedded png are in the wrong order
             thermal_np = np.vectorize(lambda x: (x >> 8) + ((x & 0x00ff) << 8))(thermal_np)
 
-        # Check if the image is present in the xlsx data
-        if self.metadata_in_file:
-            # Use the metadata found in file
-            raw2tempfunc = np.vectorize(lambda x: FlirImageExtractor.raw2temp(x, 
-                                                                    E=self.emissivity, OD=subject_distance,
-                                                                    RTemp=self.rt,
-                                                                    ATemp=self.at,
-                                                                    IRWTemp=FlirImageExtractor.extract_float(
-                                                                        meta['IRWindowTemperature']),
-                                                                    IRT=meta['IRWindowTransmission'],
-                                                                    RH=self.rh,
-                                                                    PR1=meta['PlanckR1'], PB=meta['PlanckB'],
-                                                                    PF=meta['PlanckF'],
-                                                                    PO=meta['PlanckO'], PR2=meta['PlanckR2']))
-        
-        else:
-            # Use the metadata attached to the image
-            raw2tempfunc = np.vectorize(lambda x: FlirImageExtractor.raw2temp(x, 
-                                                                    E=meta['Emissivity'], OD=subject_distance,
-                                                                    RTemp=FlirImageExtractor.extract_float(
-                                                                        meta['ReflectedApparentTemperature']),
-                                                                    ATemp=FlirImageExtractor.extract_float(
-                                                                        meta['AtmosphericTemperature']),
-                                                                    IRWTemp=FlirImageExtractor.extract_float(
-                                                                        meta['IRWindowTemperature']),
-                                                                    IRT=meta['IRWindowTransmission'],
-                                                                    RH=FlirImageExtractor.extract_float(
-                                                                        meta['RelativeHumidity']),
-                                                                    PR1=meta['PlanckR1'], PB=meta['PlanckB'],
-                                                                    PF=meta['PlanckF'],
-                                                                    PO=meta['PlanckO'], PR2=meta['PlanckR2']))
+      
+        raw2tempfunc = np.vectorize(lambda x: FlirImageExtractor.raw2temp(x,
+                                                                E=FlirImageExtractor.extract_float(
+                                                                    meta['Emissivity']), OD=subject_distance,
+                                                                RTemp=FlirImageExtractor.extract_float(
+                                                                    meta['ReflectedApparentTemperature']),
+                                                                ATemp=FlirImageExtractor.extract_float(
+                                                                    meta['AtmosphericTemperature']),
+                                                                IRWTemp=FlirImageExtractor.extract_float(
+                                                                    meta['IRWindowTemperature']),
+                                                                IRT=meta['IRWindowTransmission'],
+                                                                RH=FlirImageExtractor.extract_float(
+                                                                    meta['RelativeHumidity']),
+                                                                PR1=meta['PlanckR1'], PB=meta['PlanckB'],
+                                                                PF=meta['PlanckF'],
+                                                                PO=meta['PlanckO'], PR2=meta['PlanckR2']))
         thermal_np = raw2tempfunc(thermal_np)
         return thermal_np
 
@@ -295,32 +288,38 @@ class FlirImageExtractor:
     #     plt.imshow(rgb_np)
     #     plt.show()
 
-    # def save_images(self):
-    #     """
-    #     Save the extracted images
-    #     :return:
-    #     """
-    #     rgb_np = self.get_rgb_np()
-    #     thermal_np = self.extract_thermal_image()
+    def save_images(self):
+        """
+        Save the extracted images
+        :return:
+        """
 
-    #     img_visual = Image.fromarray(rgb_np)
-    #     thermal_normalized = (thermal_np - np.amin(thermal_np)) / (np.amax(thermal_np) - np.amin(thermal_np))
-    #     img_thermal = Image.fromarray(np.uint8(cm.inferno(thermal_normalized) * 255))
+        rgb_np = self.get_rgb_np()
+        thermal_np = self.thermal_image_np
 
-    #     fn_prefix, _ = os.path.splitext(self.flir_img_filename)
+        # img_visual = Image.fromarray(rgb_np)
         
-    #     thermal_filename = os.path.join(fn_prefix + '/' + fn_prefix.split('/')[3] + self.thermal_suffix)
-    #     image_filename = os.path.join(fn_prefix + '/' + fn_prefix.split('/')[3] + self.image_suffix)
+
+        cropped_visual_np = self.crop_center(rgb_np, 504, 342)
+        cropped_img_visual = Image.fromarray(cropped_visual_np)
+
+        thermal_normalized = (thermal_np - np.amin(thermal_np)) / (np.amax(thermal_np) - np.amin(thermal_np))
+        img_thermal = Image.fromarray(np.uint8(cm.inferno(thermal_normalized) * 255))
+
+        fn_prefix, _ = os.path.splitext(self.flir_img_filename)
         
-    #     if self.use_thumbnail:
-    #         image_filename = fn_prefix + self.thumbnail_suffix
+        thermal_image_path = os.path.join(fn_prefix.replace('Flir_Images','Thermal_Images')+'.png')
+        visual_image_path = os.path.join(fn_prefix.replace('Flir_Images','Visual_Images')+'.jpg')
 
-    #     if self.is_debug:
-    #         print("DEBUG Saving RGB image to:{}".format(image_filename))
-    #         print("DEBUG Saving Thermal image to:{}".format(thermal_filename))
+        # if self.use_thumbnail:
+        #     image_filename = fn_prefix + self.thumbnail_suffix
 
-    #     img_visual.save(image_filename)
-    #     img_thermal.save(thermal_filename)
+        if self.is_debug:
+            print("DEBUG Saving Visual Spectrum image to:{}".format(visual_image_path))
+            print("DEBUG Saving Thermal image to:{}".format(thermal_image_path))
+
+        cropped_img_visual.save(visual_image_path)
+        img_thermal.save(thermal_image_path)
 
     # def export_data_to_csv(self):
     #     """
@@ -365,15 +364,16 @@ class FlirImageExtractor:
     #         writer.writerows(formatted_flat_list)
             
 
-    # def crop_center(self, img, cropx, cropy):
-    #     """
-    #     Crop the image to the given dimensions
-    #     :return:
-    #     """
-    #     y, x, z = img.shape
-    #     startx = x // 2 - (cropx // 2)
-    #     starty = y // 2 - (cropy // 2)
-    #     return img[starty:starty + cropy, startx:startx + cropx]
+    def crop_center(self, img, cropx, cropy):
+        """
+        Crop the image to the given dimensions
+        :return:
+        """
+        y, x, z = img.shape
+        startx = x // 2 - (cropx // 2)
+        starty = y // 2 - (cropy // 2)
+        return img[starty:starty + cropy, startx:startx + cropx]
+
 
     # def image_downscale(self):
     #     """
@@ -405,34 +405,34 @@ class FlirImageExtractor:
     #     downscaled_img_visual.save(downscaled_image_filename)
     #     cropped_img_visual.save(cropped_image_filename)
         
-        if self.is_debug:
-            #print('DEBUG Original Dimensions : ', self.rgb_image_np.shape)
-            #print('DEBUG Removed black surrounding box')
-            #print('DEBUG Cropped RGB image dimensions: ', cropped_img.shape)
-            #print('DEBUG Downscaled RGB image dimensions : ', resized.shape)
-            #print("DEBUG Saving downscaled RGB image to:{}".format(downscaled_image_filename))
-            print("DEBUG Saving cropped 494x335 RGB image to:{}".format(cropped_image_filename))
+        # if self.is_debug:
+        #     #print('DEBUG Original Dimensions : ', self.rgb_image_np.shape)
+        #     #print('DEBUG Removed black surrounding box')
+        #     #print('DEBUG Cropped RGB image dimensions: ', cropped_img.shape)
+        #     #print('DEBUG Downscaled RGB image dimensions : ', resized.shape)
+        #     #print("DEBUG Saving downscaled RGB image to:{}".format(downscaled_image_filename))
+        #     print("DEBUG Saving cropped 494x335 RGB image to:{}".format(cropped_image_filename))
 
-    def create_subfolder(self):
-        """
-        Create a subfolder inside the original image
-        folder in order to save generated files
-        :return:
-        """
-        # define the name of the directory to be created
-        fn_prefix, _ = os.path.splitext(self.flir_img_filename)
-        path = fn_prefix
+    # def create_subfolder(self):
+    #     """
+    #     Create a subfolder inside the original image
+    #     folder in order to save generated files
+    #     :return:
+    #     """
+    #     # define the name of the directory to be created
+    #     fn_prefix, _ = os.path.splitext(self.flir_img_filename)
+    #     path = fn_prefix
 
-        try:
-            os.mkdir(path)
-        except OSError:
-            if self.is_debug:
-                print("DEBUG Creation of the directory %s failed" % path)
-        else:
-            if self.is_debug:
-                print("DEBUG Successfully created the directory %s " % path)
+    #     try:
+    #         os.mkdir(path)
+    #     except OSError:
+    #         if self.is_debug:
+    #             print("DEBUG Creation of the directory %s failed" % path)
+    #     else:
+    #         if self.is_debug:
+    #             print("DEBUG Successfully created the directory %s " % path)
 
-        return path
+    #     return path
     
 #     def parse_weather_data(self):
 #         file_name = 'images/weather_data.xlsx'
