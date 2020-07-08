@@ -1,4 +1,4 @@
-import React, {useState, useRef, Fragment} from 'react';
+import React, {useState, useRef, Fragment, useEffect} from 'react';
 import axios from '../../axios-orders'
 import { withRouter } from 'react-router-dom'
 
@@ -14,7 +14,7 @@ import { updateObject, checkValidity } from '../../shared/utility'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 
 import { AwesomeButton, AwesomeButtonProgress } from "react-awesome-button";
-import { Link, animateScroll as scroll } from "react-scroll";
+import { Events, Link, animateScroll as scroll } from "react-scroll";
 
 import "react-awesome-button/src/styles/styles.scss";
 
@@ -273,7 +273,6 @@ const ImageUploader = props => {
                         </div>
                 ))}
                 <div className={classes.Buttons}>
-                
                     <AwesomeButton
                         // cssModule={btnClass}
                         type="secondary"
@@ -283,6 +282,7 @@ const ImageUploader = props => {
                         >
                         Cancel
                     </AwesomeButton>
+
                
                     <AwesomeButton
                         // cssModule={btnClass}
@@ -356,7 +356,7 @@ const ImageUploader = props => {
             </div>
         </div>
         {imageMetadata ?  
-            <div className={classes.MetadataPanel} id="#metadataPanel">
+            <div className={classes.MetadataPanel} id="#metaPanel">
                 <h3 className={classes.MetadataPanel__title}>Are these values correct?</h3>
                 <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span className={classes.metaSpan}>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
                 <p className={classes.MetadataPanel__element}>Emissivity : <span className={classes.metaSpan}>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
@@ -372,13 +372,14 @@ const ImageUploader = props => {
                 <p className={classes.MetadataPanel__element}>Subject Distance: <span className={classes.metaSpan}>{imageMetadata.SubjectDistance}</span> (m)</p>
                 <div className={classes.Buttons}>
                     <Link
-                        activeClass="active"
+                        // activeClass="active"
                         to="#metaForm"
                         spy={true}
+                        // hashSpy={true}
                         smooth={true}
                         offset={0}
                         duration={1000}
-                        isDynamic
+                        // isDynamic
 
                     >  
                         <AwesomeButton

@@ -4,6 +4,10 @@ import classes from './Layout.module.scss'
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar'
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer'
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../components/UI/toastify.modules.scss'
+
 const Layout = (props) => {
 
     const [showSideDrawer, setSideDrawer] = useState(false);
@@ -29,6 +33,7 @@ const Layout = (props) => {
                 closed = {sideDrawerClosedHandler}
             />
             <main className={classes.Content}>
+                <ToastContainer className="responsive-toast" />
                 {props.children}
             </main>
         </Fragment>

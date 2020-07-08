@@ -1,30 +1,15 @@
-
-
 .ImageUploader{
-    display: block;
-    
-    padding: 0 1rem;
     padding-top: 5rem;
-    width: 100%;
-    margin: 0 auto;
+    display: block;
     min-width: 45rem;
+    width: 30%;
+    margin: 0 auto;
+    max-height: 60%;
 
 } 
-@media (min-width: 500px) {
-    .ImageUploader{
-        padding-top: 5rem;
-        display: block;
-        min-width: 45rem;
-        width: 30%;
-        margin: 0 auto;
-        max-height: 60%;
-    } 
-}
-
-
-
 
 .Message{
+    text-align: center;
     border-top-left-radius: 4rem;
     padding : 1rem 3rem;
     font-size: 1.6rem;
@@ -128,5 +113,22 @@
     
     &>*{
         flex: 0 0 50%;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .ImageUploader{
+        min-width: 0;
+        width: 100%;
+        padding: 5rem .5rem 0 .5rem;
+    }
+    .MetadataPanel{
+        min-width: 0;
+        width: 100%;
+    }
+
+    .MetadataForm{
+        min-width: 0;
+        width: 100%;
     }
 }

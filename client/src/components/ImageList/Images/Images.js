@@ -1,11 +1,22 @@
 import React, {useEffect , useState, Fragment } from 'react'
 import ReactCompareImage from 'react-compare-image';
 
+import { base, Technology, Next, Action, Configure, Services } from 'grommet-icons';
+import { ThemeProvider }  from 'styled-components';
+import { deepMerge } from "grommet-icons/utils";
+ 
 
-import noPreview from "../../../assets/images/no-preview.jpg"
+import { Link } from 'react-router-dom'
+
+import { AwesomeButton } from "react-awesome-button";
+import "react-awesome-button/src/styles/styles.scss";
+import "../../UI/btn-awsome-style.scss"
+
 import axios from '../../../axios-orders'
 
 import classes from "./Images.module.scss";
+
+
 
 
 
@@ -14,7 +25,6 @@ const Images = props => {
     const [FlirPreviewUrl, setFlirPreviewUrl] = useState(null);
     const [VisualPreviewUrl, setVisualPreviewUrl] = useState(null);
     const [ThermalPreviewUrl, setThermalPreviewUrl] = useState(null);
-
 
     const visual_request = axios.get('images/' + props.filename , { 
         responseType: 'blob',
@@ -37,6 +47,26 @@ const Images = props => {
         }
     })
 
+//     const Container = styled.div`
+//   > * {
+//     margin-right: 6px;
+//     margin-top: 6px;
+//     font-family: "Work Sans", Arial, sans-serif;
+//   }
+// `;
+    const customColorTheme = deepMerge(base, {
+        global: {
+            colors: {
+            icons: "#333333"
+            }
+        },
+        icon: {
+            size: {
+                fit: '100%',
+            }
+        }
+        });
+
 
     useEffect(() => {
         Promise.all([flir_request, visual_request]).then(function ([...responses]) {
@@ -53,15 +83,20 @@ const Images = props => {
           })
     }, [props.filename])
 
-    const  metadataPanel = Object.keys(props.metadata)
-        .map(metaKey => {
-                return <p key={metaKey}>{metaKey} :  {props.metadata[metaKey]} </p>
-            })
-
     return (
+        
         <div className={classes.container}>
             
-            <p className={classes.imgName}>{props.filename}</p>
+            <div className={classes.header}>
+                <p className={classes.imgName}>{props.filename}</p>
+
+                <Link className={classes.btn} to={"images/" + props.filename}>
+                    <ThemeProvider theme={customColorTheme}>
+                            <Services color="white" size="fit" />
+                    </ThemeProvider>
+                </Link>
+            </div>
+            
             {!FlirPreviewUrl || !VisualPreviewUrl ? props.loader : null}
             <div className={classes.comparison}>
                 {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visual Spectrum" />

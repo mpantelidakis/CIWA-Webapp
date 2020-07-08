@@ -1,22 +1,64 @@
 import React, {Component, Fragment} from 'react'
 import Modal from '../../components/UI/Modal/Modal'
 
+import { toast } from 'react-toastify';
+import '../../components/UI/toastify.modules.scss'
+// import { css } from 'glamor';
+
+
 const withErrorHandler = (WrappedComponent, axios) => {
     return class extends Component {
 
-        state = {
-            error: null
+        executeToastError = (errorMsg) => {
+            toast.error("🦄  " + errorMsg,
+                {
+                    autoClose: 2000,
+                    // progressClassName: css({
+                    //     background: "repeating-radial-gradient(red, yellow 10%, green 15%)"
+                    //   }),
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    bodyClassName: 'toastify-body'
+            })
+        }
+
+        executeToastSuccess = (successMsg) => {
+            toast.success("🚀  " + successMsg,
+                {
+                    autoClose: 2000,
+                    // progressClassName: css({
+                    //     background: "repeating-radial-gradient(red, yellow 10%, green 15%)"
+                    //   }),
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    className: 'green-toast',
+                    bodyClassName: 'toast-body'
+            })
+        }
+
+        executeToastError = (errorMsg) => {
+            toast.error("🦄  " + errorMsg,
+                {
+                    autoClose: 2500,
+                    // progressClassName: css({
+                    //     background: "repeating-radial-gradient(red, yellow 10%, green 15%)"
+                    //   }),
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    bodyClassName: 'toast-body'
+            })
         }
 
         componentDidMount() {
 
             this.reqInterceptor = axios.interceptors.request.use(req => {
-                this.setState({error: null})
                 return req
             })
 
-            this.respInterceptor = axios.interceptors.response.use(res => res, error => {
-                this.setState({error: error})
+            this.respInterceptor = axios.interceptors.response.use(res => {
+                if(res.data.msg)
+                    this.executeToastSuccess(res.data.msg)
+                return res;
+            }, error => {
+                this.executeToastError(error.response.data.error)
+                return Promise.reject(error);
             })
             
         }
@@ -29,21 +71,11 @@ const withErrorHandler = (WrappedComponent, axios) => {
             axios.interceptors.response.eject(this.respInterceptor)
         }
 
-        errorConfirmedHandler = () => {
-            this.setState({error: null})
-        }
 
+        
         render() {
             return (
-                <Fragment>
-                    {/* Distribute any props the wrappedComponent may receive */}
-                    <Modal 
-                        show={this.state.error}
-                        modalClosed={this.errorConfirmedHandler}>
-                        {this.state.error ? this.state.error.response.data.error : null}
-                    </Modal>
-                    <WrappedComponent {...this.props} />
-                </Fragment>
+                <WrappedComponent {...this.props} />
             )
         }
     };

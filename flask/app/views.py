@@ -97,6 +97,10 @@ class FileList(Resource):
 				metadata_dictionary = modify_metadata(save_path, fie)
 				fie.process_image(save_path)
 				fie.save_images()
+				fie.export_data_to_csv()
+
+				# Emissivity is float in the original image, but not when we send it via form
+				metadata_dictionary['Emissivity'] = extract_float(metadata_dictionary['Emissivity'])
 
 			else:
 				# Extract the image metadata and return a dictionary
@@ -121,23 +125,27 @@ class FileList(Resource):
 			# In meters
 			metadata_dictionary['SubjectDistance'] = extract_float(metadata_dictionary['SubjectDistance'])
 
-
-			# Save the file info in the db
-			file_entry = {
-				'file_name': filename,
-				'metadata': metadata_dictionary
-			}
-
 			resp['metadata'] = metadata_dictionary
 			
-			# If image name exists, replace it. If it does not, create it.
-			check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
-
 			# Append a message to the response object
-			if check.upserted_id is not None:
-				resp['msg'] = "File uploaded successfully."
+
+			if metadata:
+				# Save the file info in the db
+				file_entry = {
+					'file_name': filename,
+					'metadata': metadata_dictionary
+				}
+
+				# If image name exists, replace it. If it does not, create it.
+				check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
+				
+				if check.upserted_id is not None:
+					resp['msg'] = "File uploaded successfully! Generated Visual and Thermal Images."
+				else:
+					resp['msg'] = "File updated successfully! Regenerated Visual and Thermal Images."
+
 			else:
-				resp['msg'] = "File updated successfully."
+				resp['msg'] = "Successfully extracted metadata!"
 
 			# Jsonify the response
 			resp = jsonify(resp)
@@ -174,25 +182,43 @@ class FileList(Resource):
 class File(Resource):
 	# Used to get a specific image details
 	def get(self, filename):
+
 		files = dbfiles.find_one({"file_name": filename})
 		if files:
 			files.pop('_id') # _id is not json serializable
 			resp = jsonify(files)
 			resp.status_code = 200
 			return resp
-		resp = jsonify({"msg":"The file does not exist."})
-		resp.status_code = 200
+
+		resp = jsonify({"msg":"File not found"})
+		resp.status_code = 404
 		return resp
+	
+	def delete(self, filename):
+		
+		files = dbfiles.delete_one({"file_name": filename})
+		print(filename)
+
+		if files.deleted_count != 0:
+			print("Deleted .{} files.".format(files.deleted_count))
+			# Delete from db logic here
+			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Flir_Images', filename))
+			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Visual_Images', filename))
+			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Thermal_Images', filename.replace('.jpg', '.png')))
+		
+			resp = jsonify({"msg":"File successfully deleted"})
+			resp.status_code = 200
+			return resp
+
+		resp = jsonify({"msg":"File not found"})
+		resp.status_code = 404
+		return resp
+
+		
 		
 
 api.add_resource(File, '/api/file/<string:filename>')
 api.add_resource(FileList, '/api/files')
-
-
-def collect_metadata(file_path):
-	fie = FlirImageExtractor(is_debug = True)
-	metadata_dictionary = fie.process_image(file_path)
-	return metadata_dictionary
 
 def paginate(offset, limit):
 

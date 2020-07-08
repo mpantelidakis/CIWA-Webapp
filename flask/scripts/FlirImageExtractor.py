@@ -17,11 +17,13 @@ from PIL import Image
 from math import sqrt, exp, log
 from matplotlib import cm
 from matplotlib import pyplot as plt
-# from itertools import zip_longest
+
+import cv2 as cv
+import pandas as pd
+from itertools import zip_longest
 
 import numpy as np
-# import cv2 as cv
-# import pandas as pd
+
 
 
 class FlirImageExtractor:
@@ -50,14 +52,9 @@ class FlirImageExtractor:
         self.fix_endian = True
 
         self.rgb_image_np = None
-        self.downscaled_rgb_image_np = None
+        # self.downscaled_visual_np = None
+        self.cropped_visual_np = None
         self.thermal_image_np = None
-        self.weather_df = None
-        self.emissivity = 0.98
-        self.rt = 30.00
-        self.default_distance = 15.24
-        self.at = None
-        self.rh = None
 
     pass
 
@@ -191,11 +188,6 @@ class FlirImageExtractor:
         thermal_img = Image.open(thermal_img_stream)
         thermal_np = np.array(thermal_img)
 
-        subject_distance = self.default_distance
-        
-        if 'SubjectDistance' in meta:
-            subject_distance = FlirImageExtractor.extract_float(meta['SubjectDistance'])
-
         if self.fix_endian:
             # fix endianness, the bytes in the embedded png are in the wrong order
             thermal_np = np.vectorize(lambda x: (x >> 8) + ((x & 0x00ff) << 8))(thermal_np)
@@ -203,7 +195,9 @@ class FlirImageExtractor:
       
         raw2tempfunc = np.vectorize(lambda x: FlirImageExtractor.raw2temp(x,
                                                                 E=FlirImageExtractor.extract_float(
-                                                                    meta['Emissivity']), OD=subject_distance,
+                                                                    meta['Emissivity']), 
+                                                                OD=FlirImageExtractor.extract_float(
+                                                                    meta['SubjectDistance']),
                                                                 RTemp=FlirImageExtractor.extract_float(
                                                                     meta['ReflectedApparentTemperature']),
                                                                 ATemp=FlirImageExtractor.extract_float(
@@ -300,8 +294,8 @@ class FlirImageExtractor:
         # img_visual = Image.fromarray(rgb_np)
         
 
-        cropped_visual_np = self.crop_center(rgb_np, 504, 342)
-        cropped_img_visual = Image.fromarray(cropped_visual_np)
+        self.cropped_visual_np = self.crop_center(rgb_np, 504, 342)
+        cropped_img_visual = Image.fromarray(self.cropped_visual_np)
 
         thermal_normalized = (thermal_np - np.amin(thermal_np)) / (np.amax(thermal_np) - np.amin(thermal_np))
         img_thermal = Image.fromarray(np.uint8(cm.inferno(thermal_normalized) * 255))
@@ -321,48 +315,47 @@ class FlirImageExtractor:
         cropped_img_visual.save(visual_image_path)
         img_thermal.save(thermal_image_path)
 
-    # def export_data_to_csv(self):
-    #     """
-    #     Export thermal data, along with rgb information 
-    #     of the downscaled image to a csv file
-    #     :return:
-    #     """
+    def export_data_to_csv(self):
+        """
+        Export thermal data, along with rgb information 
+        of the downscaled image to a csv file
+        :return:
+        """
         
-    #     fn_prefix, _ = os.path.splitext(self.flir_img_filename)
-    #     path = os.path.join(fn_prefix + '/' + fn_prefix.split('/')[3] + self.csv_suffix)
-
-
-    #     # list of pixel coordinates and thermal values
-    #     coords_and_thermal_values = []
-    #     for e in np.ndenumerate(self.thermal_image_np):
-    #         x, y = e[0]
-    #         c = e[1]
-    #         coords_and_thermal_values.append([x, y, c])
+        fn_prefix, _ = os.path.splitext(self.flir_img_filename)
+        csv_path = os.path.join(fn_prefix.replace('Flir_Images','Csv_Files')+'.csv')
+        
+        downscaled_visual_np = self.image_downscale()
+        # list of pixel coordinates and thermal values
+        coords_and_thermal_values = []
+        for e in np.ndenumerate(self.thermal_image_np):
+            x, y = e[0]
+            c = e[1]
+            coords_and_thermal_values.append([x, y, c])
     
-    #     # list of rgb values of the downscaled 60x80 image
-    #     rgb_values = []
-    #     for i in range(self.downscaled_rgb_image_np.shape[0]):
-    #         for j in range(self.downscaled_rgb_image_np.shape[1]):
-    #             R = self.downscaled_rgb_image_np[i,j,0]
-    #             G = self.downscaled_rgb_image_np[i,j,1]
-    #             B = self.downscaled_rgb_image_np[i,j,2]
-    #             rgb_values.append([R, G, B])
+        # list of rgb values of the downscaled 60x80 image
+        rgb_values = []
+        for i in range(downscaled_visual_np.shape[0]):
+            for j in range(downscaled_visual_np.shape[1]):
+                R = downscaled_visual_np[i,j,0]
+                G = downscaled_visual_np[i,j,1]
+                B = downscaled_visual_np[i,j,2]
+                rgb_values.append([R, G, B])
         
-    #     # List of lists of lists [[[x,y,temp],[R,G,B]]]
-    #     merged_list = list(map(list,zip(coords_and_thermal_values, rgb_values)))
+        # List of lists of lists [[[x,y,temp],[R,G,B]]]
+        merged_list = list(map(list,zip(coords_and_thermal_values, rgb_values)))
         
-    #     # List of lists [[x,y,temp],[R,G,B]]
-    #     flat_list = [item for sublist in merged_list for item in sublist]
+        # List of lists [[x,y,temp],[R,G,B]]
+        flat_list = [item for sublist in merged_list for item in sublist]
 
-    #     # Combination of consecutive sublists [x,y,temp,R,G,B] -> format needed for csv writer
-    #     x = iter(flat_list)
-    #     formatted_flat_list = [a+b for a, b in zip_longest(x, x, fillvalue=[])]
+        # Combination of consecutive sublists [x,y,temp,R,G,B] -> format needed for csv writer
+        x = iter(flat_list)
+        formatted_flat_list = [a+b for a, b in zip_longest(x, x, fillvalue=[])]
         
-    #     with open(path, 'w') as fh:
-    #         writer = csv.writer(fh, delimiter=',')
-    #         writer.writerow(['x', 'y', 'Temp(c)', 'R', 'G', 'B'])
-    #         writer.writerows(formatted_flat_list)
-            
+        with open(csv_path, 'w') as fh:
+            writer = csv.writer(fh, delimiter=',')
+            writer.writerow(['x', 'y', 'Temp(c)', 'R', 'G', 'B'])
+            writer.writerows(formatted_flat_list)
 
     def crop_center(self, img, cropx, cropy):
         """
@@ -375,43 +368,21 @@ class FlirImageExtractor:
         return img[starty:starty + cropy, startx:startx + cropx]
 
 
-    # def image_downscale(self):
-    #     """
-    #     Downscale the rgb image to 60x80 resolution
-    #     to match the thermal image's resolution
-    #     and save it
-    #     :return:
-    #     """
+    def image_downscale(self):
+        """
+        Downscale the rgb image to 60x80 resolution
+        to match the thermal image's resolution
+        and save it
+        :return:
+        """
+        width = 80
+        height = 60
+        dim = (width, height)
 
-    #     # crop the rgb image
-    #     cropped_img = self.crop_center(self.rgb_image_np, 494, 335)
+        # resize the rgb image
+        resized_visual_np = cv.resize(self.cropped_visual_np, dim, interpolation=cv.INTER_AREA)
 
-    #     width = 80
-    #     height = 60
-    #     dim = (width, height)
-
-    #     # resize the rgb image
-    #     resized = cv.resize(cropped_img, dim, interpolation=cv.INTER_AREA)
-
-    #     fn_prefix, _ = os.path.splitext(self.flir_img_filename)
-    #     downscaled_image_filename = os.path.join(fn_prefix + '/' + fn_prefix.split('/')[3] + self.downscaled_image_suffix)
-    #     cropped_image_filename = os.path.join(fn_prefix + '/' + fn_prefix.split('/')[3] + self.cropped_image_suffix)
-
-    #     downscaled_img_visual = Image.fromarray(resized)
-    #     self.downscaled_rgb_image_np = np.array(downscaled_img_visual)
-        
-    #     cropped_img_visual = Image.fromarray(cropped_img)
-        
-    #     downscaled_img_visual.save(downscaled_image_filename)
-    #     cropped_img_visual.save(cropped_image_filename)
-        
-        # if self.is_debug:
-        #     #print('DEBUG Original Dimensions : ', self.rgb_image_np.shape)
-        #     #print('DEBUG Removed black surrounding box')
-        #     #print('DEBUG Cropped RGB image dimensions: ', cropped_img.shape)
-        #     #print('DEBUG Downscaled RGB image dimensions : ', resized.shape)
-        #     #print("DEBUG Saving downscaled RGB image to:{}".format(downscaled_image_filename))
-        #     print("DEBUG Saving cropped 494x335 RGB image to:{}".format(cropped_image_filename))
+        return resized_visual_np
 
     # def create_subfolder(self):
     #     """
