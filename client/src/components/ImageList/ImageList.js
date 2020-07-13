@@ -77,7 +77,7 @@ const ImageList = props => {
     }else{
         images = imageList.map((file, idx) => {
             return (
-                <Images loader={loader} filename={file.file_name} metadata={file.metadata}  key={idx + 1}/>
+                <Images loader={loader} filename={file.file_name}  key={idx + 1}/>
             )
         })
     }

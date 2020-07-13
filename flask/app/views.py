@@ -6,6 +6,8 @@ from flask import Flask, request, redirect, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
 from scripts.FlirImageExtractor import FlirImageExtractor
+from ML.predict import Predictor
+
 
 from app import mongo
 
@@ -47,6 +49,42 @@ def extract_float(dirtystr):
         """
         digits = re.findall(r"[-+]?\d*\.\d+|\d+", dirtystr)
         return float(digits[0])
+
+def paginate(offset, limit):
+
+	total_files = dbfiles.find().count()
+
+	offset = 0 if offset <0 or offset >total_files else offset
+
+	
+	print(total_files)
+
+	output = []
+
+	if total_files>0:
+		starting_id = dbfiles.find().sort('_id', pymongo.ASCENDING)
+		last_id = starting_id[offset]['_id']
+
+		images = dbfiles.find({'_id' : {'$gte' : last_id}}).sort('_id', pymongo.ASCENDING).limit(limit)
+
+		
+		for image in images:
+			image.pop('_id') # _id is not json serializable
+			output.append(image)
+	
+	next_url = {
+		"offset": str(None if offset + limit>=total_files or total_files==0 else offset+limit),
+		"limit": str(limit)
+	}
+	previous_url = {
+		"offset": str(None if offset-limit<0 or total_files==0 else offset-limit),
+		"limit": str(limit)
+	}
+	print("Previous Url:{}".format(previous_url))
+	print("Next Url:{}".format(next_url))
+
+	return jsonify({'result' : output, 'prev_url' : previous_url, 'next_url': next_url})
+
 
 class FileList(Resource):
 	# Used to upload a new image or get all the available images
@@ -190,7 +228,7 @@ class File(Resource):
 			resp.status_code = 200
 			return resp
 
-		resp = jsonify({"msg":"File not found"})
+		resp = jsonify({"error":"Error 404, image not found"})
 		resp.status_code = 404
 		return resp
 	
@@ -204,65 +242,60 @@ class File(Resource):
 			# Delete from db logic here
 			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Flir_Images', filename))
 			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Visual_Images', filename))
+			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Visual_Images_nocrop', filename))
 			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Thermal_Images', filename.replace('.jpg', '.png')))
 		
 			resp = jsonify({"msg":"File successfully deleted"})
 			resp.status_code = 200
 			return resp
 
-		resp = jsonify({"msg":"File not found"})
+		resp = jsonify({"error":"Error 404, image not found"})
 		resp.status_code = 404
 		return resp
 
-		
-		
+
+class Predict(Resource):
+	# Used to get a specific image details
+	def get(self, filename):
+
+		files = dbfiles.find_one({"file_name": filename})
+		if files:
+			path = os.path.join(app.config['UPLOAD_FOLDER'],"Visual_Images_nocrop", filename)
+
+			print(path)
+
+			pred = Predictor(image=path)
+			pred.predictNsave()
+
+			del pred
+
+			resp = jsonify({"msg":"Ran the file through the FRRN model."})
+			resp.status_code = 200
+			return resp
+
+		resp = jsonify({"error":"Error 404, image not found"})
+		resp.status_code = 404
+		return resp
+
 
 api.add_resource(File, '/api/file/<string:filename>')
 api.add_resource(FileList, '/api/files')
+api.add_resource(Predict, '/api/predict/<string:filename>')
 
-def paginate(offset, limit):
 
-	total_files = dbfiles.find().count()
+# No longer needed, all media files are served directly by nginx
+# @app.route('/images/<filename>', methods=['GET'])
+# def get_image(filename):
+# 	"""
+# 	Returns an image from the media folder, given the type of the image
+# 	Expects query param 'type' and the file name in the body of the request
+# 	"""
+# 	typeOfImage = request.args.get('type')
+# 	# print(typeOfImage)
+# 	# print(app.config['UPLOAD_FOLDER'])
+# 	# print(filename)
 
-	offset = 0 if offset <0 or offset >total_files else offset
-
-	
-	print(total_files)
-
-	output = []
-
-	if total_files>0:
-		starting_id = dbfiles.find().sort('_id', pymongo.ASCENDING)
-		last_id = starting_id[offset]['_id']
-
-		images = dbfiles.find({'_id' : {'$gte' : last_id}}).sort('_id', pymongo.ASCENDING).limit(limit)
-
-		
-		for image in images:
-			image.pop('_id') # _id is not json serializable
-			output.append(image)
-	
-	next_url = {
-		"offset": str(None if offset + limit>=total_files or total_files==0 else offset+limit),
-		"limit": str(limit)
-	}
-	previous_url = {
-		"offset": str(None if offset-limit<0 or total_files==0 else offset-limit),
-		"limit": str(limit)
-	}
-	print("Previous Url:{}".format(previous_url))
-	print("Next Url:{}".format(next_url))
-
-	return jsonify({'result' : output, 'prev_url' : previous_url, 'next_url': next_url})
-
-@app.route('/images/<filename>', methods=['GET'])
-def get_image(filename):
-	"""
-	Returns an image from the media folder, given the type of the image
-	Expects query param 'type' and the file name in the body of the request
-	"""
-	typeOfImage = request.args.get('type')
-	# print(typeOfImage)
-	# print(app.config['UPLOAD_FOLDER'])
-	# print(filename)
-	return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],typeOfImage),filename)
+# 	if typeOfImage == 'Csv_Files':
+# 		return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],typeOfImage),filename, as_attachment=True)
+# 	else:
+# 		return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],typeOfImage),filename)

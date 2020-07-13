@@ -292,6 +292,9 @@ class FlirImageExtractor:
         thermal_np = self.thermal_image_np
 
         # img_visual = Image.fromarray(rgb_np)
+
+        img_visual = Image.fromarray(rgb_np)
+
         
 
         self.cropped_visual_np = self.crop_center(rgb_np, 504, 342)
@@ -304,14 +307,17 @@ class FlirImageExtractor:
         
         thermal_image_path = os.path.join(fn_prefix.replace('Flir_Images','Thermal_Images')+'.png')
         visual_image_path = os.path.join(fn_prefix.replace('Flir_Images','Visual_Images')+'.jpg')
+        visual_image_nocrop_path = os.path.join(fn_prefix.replace('Flir_Images','Visual_Images_nocrop')+'.jpg')
 
         # if self.use_thumbnail:
         #     image_filename = fn_prefix + self.thumbnail_suffix
 
         if self.is_debug:
+            print("DEBUG Saving Visual Spectrum nocro[ image to:{}".format(visual_image_nocrop_path))
             print("DEBUG Saving Visual Spectrum image to:{}".format(visual_image_path))
             print("DEBUG Saving Thermal image to:{}".format(thermal_image_path))
 
+        img_visual.save(visual_image_nocrop_path)
         cropped_img_visual.save(visual_image_path)
         img_thermal.save(thermal_image_path)
 

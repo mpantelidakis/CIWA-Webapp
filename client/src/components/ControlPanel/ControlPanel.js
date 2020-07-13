@@ -1,11 +1,20 @@
 import React, {useEffect , useState, Fragment } from 'react'
 import axios from '../../axios-orders'
+import ReactCompareImage from 'react-compare-image';
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/src/styles/styles.scss";
 
+import NotFound from '../NotFound/NotFound'
+
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 
-import { Circle, Heart, Orbitals, Ouroboro, Roller, Spinner, Ripple, Ring } from 'react-spinners-css';
+import {Spinner} from 'react-spinners-css';
+
+import {  base, Trash, Download, Technology, Next, Action, Configure, Services } from 'grommet-icons';
+
+import Table from '../Table/Table'
+
+import Button from '../UI/Button/Button'
 
 // import styles from 'react-awesome-button/src/styles/themes/theme-red';
 
@@ -19,58 +28,77 @@ const ControlPanel = props => {
     const [FlirPreviewUrl, setFlirPreviewUrl] = useState(null);
     const [VisualPreviewUrl, setVisualPreviewUrl] = useState(null);
     const [ThermalPreviewUrl, setThermalPreviewUrl] = useState(null);
+    const [PredictionPreviewUrl, setPredictionPreviewUrl] = useState(null);
+    const [VisualNoCropPreviewUrl, setVisualNoCropPreviewUrl] = useState(null);
 
-    const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
-        responseType: 'blob',
-        params: {
-            type: 'Visual_Images'
-        }
-    })
+    const [imageNotFound, setImageNotFound] = useState(false)
+
+    // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
+    //     responseType: 'blob',
+    //     params: {
+    //         type: 'Visual_Images'
+    //     }
+    // })
     
-    const flir_request = axios.get('images/' + props.match.params['imageName'] , { 
-        responseType: 'blob',
-        params: {
-            type: 'Flir_Images'
-        }
-    })
+    // const flir_request = axios.get('images/' + props.match.params['imageName'] , { 
+    //     responseType: 'blob',
+    //     params: {
+    //         type: 'Flir_Images'
+    //     }
+    // })
     
-    const thermal_request = axios.get('images/' + props.match.params['imageName'].replace('.jpg','.png') , { 
-        responseType: 'blob',
-        params: {
-            type: 'Thermal_Images'
-        }
-    })
+    // const thermal_request = axios.get('images/' + props.match.params['imageName'].replace('.jpg','.png') , { 
+    //     responseType: 'blob',
+    //     params: {
+    //         type: 'Thermal_Images'
+    //     }
+    // })
 
-    const getImage = axios.get('api/file/' + props.match.params['imageName'])
-
+    
     useEffect(() => {
 
         setImageName(props.match.params['imageName'])
 
-        Promise.all([flir_request, visual_request, thermal_request, getImage]).then(function ([...responses]) {
-            const responseOne = responses[0]
-            const responseTwo = responses[1]
-            const responseThree = responses[2]
-            const responseFour = responses[3]
-
-            setFlirPreviewUrl(URL.createObjectURL(responseOne.data))
-            setVisualPreviewUrl(URL.createObjectURL(responseTwo.data))
-            setThermalPreviewUrl(URL.createObjectURL(responseThree.data))
-            setMetadata(responseFour.data.metadata)
-
-          }).catch(errors => {
-            // react on errors.
-          })
+        axios.get('api/file/' + props.match.params['imageName'])
+                    .then(res => {
+                        console.log(res.data)
+                        setMetadata(res.data.metadata)
+                        Promise.all([
+                            axios.get('mediafiles/flir/' + props.match.params['imageName'] , { 
+                                responseType: 'blob'
+                            }),
+                            axios.get('mediafiles/visual/' + props.match.params['imageName'] , { 
+                                responseType: 'blob'
+                            }),
+                            axios.get('mediafiles/visual_nocrop/' + props.match.params['imageName'] , { 
+                                responseType: 'blob'
+                            }),
+                            axios.get('mediafiles/thermal/' + props.match.params['imageName'].replace('.jpg','.png') , { 
+                                responseType: 'blob'
+                            })
+                        ]).then(function ([...responses]) {
+                            const responseOne = responses[0]
+                            const responseTwo = responses[1]
+                            const responseThree = responses[2]
+                            const responseFour = responses[3]
+                          
+                            setFlirPreviewUrl(URL.createObjectURL(responseOne.data))
+                            setVisualPreviewUrl(URL.createObjectURL(responseTwo.data))
+                            setVisualNoCropPreviewUrl(URL.createObjectURL(responseThree.data))
+                            setThermalPreviewUrl(URL.createObjectURL(responseFour.data))
+                
+                          }).catch(errors => {
+                          })
+                    })
+                    .catch(errors => {
+                        setImageNotFound(true)
+                    })
     }, [])
 
-    const  metadataPanel = Object.keys(metadata)
-                            .map(metaKey => {
-                                if(metaKey!="SourceFile")
-                                return <p key={metaKey}>{metaKey} :  {metadata[metaKey]} </p>
-                            })
+ 
 
     const deleteHandler = () => {
-        axios.delete('api/file/' + imageName) 
+        axios.delete('api/file/' + imageName)
         .then(res => {
             console.log(res.data.msg)
             props.history.push('/images');
@@ -80,44 +108,84 @@ const ControlPanel = props => {
         })
     }
 
+    const predictHandler = () => {
+        axios.get('api/predict/' + imageName)
+        .then(res => {
+            console.log(res.data.msg)
+            axios.get('mediafiles/predictions/' + imageName.replace('.jpg','_pred.png'), {
+                responseType: 'blob'
+            }).then(res => {
+                console.log(res)
+                setPredictionPreviewUrl(URL.createObjectURL(res.data))
+                
+            })
+            .catch(error => {
+                //The interceptor of the hoc handles the exception
+            })
+        })
+        .catch(error => {
+            //The interceptor of the hoc handles the exception
+        })
+    }
+
+
+    const downloadCsvHandler = () => {
+        axios.get('mediafiles/csv/' + imageName.replace('.jpg','.csv'), {
+            responseType: 'blob'
+        }).then(res => {
+            console.log(res)
+            var filename = /[^/]*$/.exec(res.headers['content-disposition'])[0];
+            let url = URL.createObjectURL(res.data);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+        })
+        .catch(error => {
+            //The interceptor of the hoc handles the exception
+        })
+    }
+
     return (
-        <div className={classes.ControlPanel}>
-           <h1 className={classes.ControlTitle}>Image Control Panel</h1>
-           {FlirPreviewUrl ? <img src={FlirPreviewUrl} alt={`Img-flir${props.id}`}/> : <Spinner/>}
-           {VisualPreviewUrl ? <img src={VisualPreviewUrl} alt={`Img-flir${props.id}`}/> : <Spinner/>}
-           {ThermalPreviewUrl ? <img src={ThermalPreviewUrl} alt={`Img-flir${props.id}`}/> : <Spinner/>}
-            {metadata? metadataPanel : null}
-            <AwesomeButton
-                // cssModule={btnClass}
-                type="secondary"
-                ripple
-                onPress={deleteHandler}
-                >
-                Delete
-            </AwesomeButton>
-            <AwesomeButton
-                // cssModule={btnClass}
-                type="primary"
-                ripple
-                onPress={()=>{}}
-                >
-                Find Sunlit leaves
-            </AwesomeButton>
-            <AwesomeButton
-                // cssModule={btnClass}
-                type="primary"
-                ripple
-                onPress={()=>{}}
-                >
-                Download Temperature csv
-            </AwesomeButton>
-
-
-           
-        </div>
         
-     
+        <Fragment>
+            {imageNotFound ? <NotFound>Error 404, image not found.</NotFound> : 
+                <div className={classes.ControlPanel}>
+                    <h1 className={classes.ControlTitle}>Control Panel</h1>
 
+                    <div className={classes.imgNMeta}>
+                        <div className={classes.container}>
+                
+                            <div className={classes.header}>
+                                <p className={classes.imgName}>{imageName}</p>
+                            </div>
+                            
+                            {!FlirPreviewUrl || !VisualPreviewUrl ? <Spinner/> : null}
+                            <div className={classes.comparison}>
+                                {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visual Spectrum" />
+                                :null}
+                            </div>  
+                        </div>
+                        {metadata? <Table data={metadata}>Image metadata</Table> : null}
+                        <div className={classes.buttons}>
+                            <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="small" /><span>Delete</span></Button>
+                            <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="small" /><span>Download temperature data</span></Button>
+                            <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
+                        </div>
+                    </div>
+                    {/* {PredictionPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={PredictionPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visual Spectrum" />
+                                :null} */}
+                    
+
+                    
+                    
+                    
+                    {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : <Spinner/>}
+                    {PredictionPreviewUrl ? <img src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : <Spinner/>}
+    
+                </div>}
+        </Fragment>
         
     )
 }
