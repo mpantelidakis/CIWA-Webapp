@@ -62,6 +62,22 @@ const ControlPanel = props => {
         axios.get('api/file/' + props.match.params['imageName'])
                     .then(res => {
                         console.log(res.data)
+                        if(res.data['has_mask']){
+                            Promise.all([
+                                axios.get('mediafiles/predictions/' + props.match.params['imageName'].replace('.jpg','_pred.png') , { 
+                                    responseType: 'blob'
+                                }),
+                                axios.get('mediafiles/visual_nocrop/' + props.match.params['imageName'] , { 
+                                    responseType: 'blob'
+                                })
+                            ]).then(function ([...responses]) {
+                                const responsePred = responses[0]
+                                const responseVisualNoCrop = responses[1]
+                                
+                                setPredictionPreviewUrl(URL.createObjectURL(responsePred.data))
+                                setVisualNoCropPreviewUrl(URL.createObjectURL(responseVisualNoCrop.data))
+                            })
+                        }
                         setMetadata(res.data.metadata)
                         Promise.all([
                             axios.get('mediafiles/flir/' + props.match.params['imageName'] , { 
@@ -70,25 +86,18 @@ const ControlPanel = props => {
                             axios.get('mediafiles/visual/' + props.match.params['imageName'] , { 
                                 responseType: 'blob'
                             }),
-                            axios.get('mediafiles/visual_nocrop/' + props.match.params['imageName'] , { 
-                                responseType: 'blob'
-                            }),
                             axios.get('mediafiles/thermal/' + props.match.params['imageName'].replace('.jpg','.png') , { 
                                 responseType: 'blob'
-                            })
+                            }),
                         ]).then(function ([...responses]) {
-                            const responseOne = responses[0]
-                            const responseTwo = responses[1]
-                            const responseThree = responses[2]
-                            const responseFour = responses[3]
-                          
-                            setFlirPreviewUrl(URL.createObjectURL(responseOne.data))
-                            setVisualPreviewUrl(URL.createObjectURL(responseTwo.data))
-                            setVisualNoCropPreviewUrl(URL.createObjectURL(responseThree.data))
-                            setThermalPreviewUrl(URL.createObjectURL(responseFour.data))
-                
-                          }).catch(errors => {
-                          })
+                            const responseFlir = responses[0]
+                            const responseVisual = responses[1]
+                            const responseThermal = responses[2]
+                    
+                            setFlirPreviewUrl(URL.createObjectURL(responseFlir.data))
+                            setVisualPreviewUrl(URL.createObjectURL(responseVisual.data))
+                            setThermalPreviewUrl(URL.createObjectURL(responseThermal.data))
+                        })
                     })
                     .catch(errors => {
                         setImageNotFound(true)
@@ -112,15 +121,19 @@ const ControlPanel = props => {
         axios.get('api/predict/' + imageName)
         .then(res => {
             console.log(res.data.msg)
-            axios.get('mediafiles/predictions/' + imageName.replace('.jpg','_pred.png'), {
-                responseType: 'blob'
-            }).then(res => {
-                console.log(res)
-                setPredictionPreviewUrl(URL.createObjectURL(res.data))
+            Promise.all([
+                axios.get('mediafiles/predictions/' + props.match.params['imageName'].replace('.jpg','_pred.png') , { 
+                    responseType: 'blob'
+                }),
+                axios.get('mediafiles/visual_nocrop/' + props.match.params['imageName'] , { 
+                    responseType: 'blob'
+                })
+            ]).then(function ([...responses]) {
+                const responsePred = responses[0]
+                const responseVisualNoCrop = responses[1]
                 
-            })
-            .catch(error => {
-                //The interceptor of the hoc handles the exception
+                setPredictionPreviewUrl(URL.createObjectURL(responsePred.data))
+                setVisualNoCropPreviewUrl(URL.createObjectURL(responseVisualNoCrop.data))
             })
         })
         .catch(error => {
@@ -174,15 +187,16 @@ const ControlPanel = props => {
                             <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
                         </div>
                     </div>
-                    {/* {PredictionPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={PredictionPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visual Spectrum" />
-                                :null} */}
+                    {PredictionPreviewUrl && VisualNoCropPreviewUrl ? 
+                    <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Sunlit leaves" leftImage={PredictionPreviewUrl} rightImage={VisualNoCropPreviewUrl} rightImageLabel="Visual Spectrum" />
+                    :null}
                     
 
                     
                     
-                    
-                    {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : <Spinner/>}
-                    {PredictionPreviewUrl ? <img src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : <Spinner/>}
+{/*                     
+                    {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : null}
+                    {PredictionPreviewUrl ? <img src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : null} */}
     
                 </div>}
         </Fragment>

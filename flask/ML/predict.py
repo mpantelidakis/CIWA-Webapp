@@ -48,6 +48,7 @@ class Predictor:
         print("Image -->", self.image)
 
         # Initializing network
+        tf.reset_default_graph()
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
         sess=tf.Session(config=config)
@@ -93,4 +94,4 @@ class Predictor:
         print("Finished!")
         print("Wrote image " + "%s_pred.png"%(path))
 
-        return
+        return True

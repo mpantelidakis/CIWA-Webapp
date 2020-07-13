@@ -171,7 +171,8 @@ class FileList(Resource):
 				# Save the file info in the db
 				file_entry = {
 					'file_name': filename,
-					'metadata': metadata_dictionary
+					'metadata': metadata_dictionary,
+					'has_mask': False
 				}
 
 				# If image name exists, replace it. If it does not, create it.
@@ -265,9 +266,9 @@ class Predict(Resource):
 			print(path)
 
 			pred = Predictor(image=path)
-			pred.predictNsave()
+			has_mask = pred.predictNsave()
 
-			del pred
+			dbfiles.update_one({"file_name": filename }, { "$set": { "has_mask": has_mask } })
 
 			resp = jsonify({"msg":"Ran the file through the FRRN model."})
 			resp.status_code = 200
