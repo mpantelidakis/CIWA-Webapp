@@ -134,7 +134,7 @@ class FileList(Resource):
 				fie = FlirImageExtractor(is_debug = True, provided_metadata=json_meta)
 				metadata_dictionary = modify_metadata(save_path, fie)
 				fie.process_image(save_path)
-				fie.save_images()
+				w, h = fie.save_images()
 				fie.export_data_to_csv()
 
 				# Emissivity is float in the original image, but not when we send it via form
@@ -172,7 +172,9 @@ class FileList(Resource):
 				file_entry = {
 					'file_name': filename,
 					'metadata': metadata_dictionary,
-					'has_mask': False
+					'has_mask': False,
+					'cropped_width': w,
+					'cropped_height': h
 				}
 
 				# If image name exists, replace it. If it does not, create it.
@@ -245,6 +247,7 @@ class File(Resource):
 			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Visual_Images', filename))
 			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Visual_Images_nocrop', filename))
 			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Thermal_Images', filename.replace('.jpg', '.png')))
+			os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'Predictions', filename.replace('.jpg', '_pred.png')))
 		
 			resp = jsonify({"msg":"File successfully deleted"})
 			resp.status_code = 200

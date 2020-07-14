@@ -9,6 +9,7 @@ from ML.builders import model_builder
 
 from app import app
 
+from PIL import Image
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('--image', type=str, default=None, required=True, help='The image you want to predict on. ')
@@ -89,6 +90,20 @@ class Predictor:
         path = os.path.join(app.config['UPLOAD_FOLDER'], 'Predictions', file_name)
         cv2.imwrite("%s_pred.png"%(path),cv2.cvtColor(np.uint8(out_vis_image), cv2.COLOR_RGB2BGR))
 
+
+        im = Image.open("%s_pred.png"%(path))
+        x, y = im.size
+        pixels = im.load()
+
+        new_im = Image.new('RGBA', (x, y), (0,0,0,0))
+        pixels_new = new_im.load()
+
+        for i in range(0,x):
+            for j in range (0, y):
+                if pixels[i, j] == (0, 255, 0):
+                    pixels_new[i, j] = (255, 162, 0,255)
+        
+        new_im.save("%s_pred.png"%(path), 'PNG')
 
         print("")
         print("Finished!")

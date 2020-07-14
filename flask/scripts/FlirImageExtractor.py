@@ -297,8 +297,16 @@ class FlirImageExtractor:
 
         
 
-        self.cropped_visual_np = self.crop_center(rgb_np, 504, 342)
+        self.cropped_visual_np = self.crop_image_only_outside(rgb_np, 30)
+
         cropped_img_visual = Image.fromarray(self.cropped_visual_np)
+
+        widthDiff = img_visual.size[0] - cropped_img_visual.size[0]
+        heightDiff = img_visual.size[1] - cropped_img_visual.size[1]
+
+        #TODO SAVE THESE IN THE DB SO I CAN INSTACROP THE MASK
+        if self.is_debug:
+            print("Debug: DIff: {} x {}".format(widthDiff,heightDiff))
 
         thermal_normalized = (thermal_np - np.amin(thermal_np)) / (np.amax(thermal_np) - np.amin(thermal_np))
         img_thermal = Image.fromarray(np.uint8(cm.inferno(thermal_normalized) * 255))
@@ -313,13 +321,15 @@ class FlirImageExtractor:
         #     image_filename = fn_prefix + self.thumbnail_suffix
 
         if self.is_debug:
-            print("DEBUG Saving Visual Spectrum nocro[ image to:{}".format(visual_image_nocrop_path))
+            print("DEBUG Saving Visual Spectrum nocrop image to:{}".format(visual_image_nocrop_path))
             print("DEBUG Saving Visual Spectrum image to:{}".format(visual_image_path))
             print("DEBUG Saving Thermal image to:{}".format(thermal_image_path))
 
         img_visual.save(visual_image_nocrop_path)
         cropped_img_visual.save(visual_image_path)
         img_thermal.save(thermal_image_path)
+
+        return widthDiff, heightDiff
 
     def export_data_to_csv(self):
         """
@@ -373,6 +383,24 @@ class FlirImageExtractor:
         starty = y // 2 - (cropy // 2)
         return img[starty:starty + cropy, startx:startx + cropx]
 
+
+    def crop_image_only_outside(self, img, tol=0):
+        """
+        Dynamic cropping of black bounding box
+
+        Keyword arguments:
+        img -- numpy array
+        tol -- tolerance, how much away from total black (default 0)
+        :return:
+        """
+        mask = img>tol
+        if img.ndim==3:
+            mask = mask.all(2)
+        m,n = mask.shape
+        mask0,mask1 = mask.any(0),mask.any(1)
+        col_start,col_end = mask0.argmax(),n-mask0[::-1].argmax()
+        row_start,row_end = mask1.argmax(),m-mask1[::-1].argmax()
+        return img[row_start:row_end,col_start:col_end]
 
     def image_downscale(self):
         """
