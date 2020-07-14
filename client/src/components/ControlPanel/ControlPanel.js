@@ -18,6 +18,7 @@ import Button from '../UI/Button/Button'
 
 // import styles from 'react-awesome-button/src/styles/themes/theme-red';
 
+import ImageWithOverlay from '../UI/ImageWithOverlay/ImageWithOverlay'
 import classes from './ControlPanel.module.scss'
 
 
@@ -166,37 +167,41 @@ const ControlPanel = props => {
             {imageNotFound ? <NotFound>Error 404, image not found.</NotFound> : 
                 <div className={classes.ControlPanel}>
                     <h1 className={classes.ControlTitle}>Control Panel</h1>
+                    {/* <img src={VisualPreviewUrl}/> */}
 
-                    <div className={classes.imgNMeta}>
-                        <div className={classes.container}>
+                    <div className={classes.ImgNmeta}>
+                        <div className={classes.Container}>
                 
-                            <div className={classes.header}>
-                                <p className={classes.imgName}>{imageName}</p>
+                            <div className={classes.Header}>
+                                <p className={classes.ImgName}>{imageName}</p>
                             </div>
                             
                             {!FlirPreviewUrl || !VisualPreviewUrl ? <Spinner/> : null}
-                            <div className={classes.comparison}>
+                            <div className={classes.Comparison}>
                                 {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visual Spectrum" />
                                 :null}
                             </div>  
                         </div>
                         {metadata? <Table data={metadata}>Image metadata</Table> : null}
-                        <div className={classes.buttons}>
+                        <div className={classes.Buttons}>
                             <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="small" /><span>Delete</span></Button>
                             <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="small" /><span>Download temperature data</span></Button>
                             <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
                         </div>
                     </div>
-                    {PredictionPreviewUrl && VisualNoCropPreviewUrl ? 
-                    <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Sunlit leaves" leftImage={PredictionPreviewUrl} rightImage={VisualNoCropPreviewUrl} rightImageLabel="Visual Spectrum" />
-                    :null}
-                    
 
+                    {VisualNoCropPreviewUrl && PredictionPreviewUrl ?<ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> : null}
+                    {/* <div className={classes.Overlay}>
+                        {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : null}
+                        {PredictionPreviewUrl ? <img className={classes.Leaves} src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : null}
+                     {PredictionPreviewUrl && VisualNoCropPreviewUrl ? 
+                    <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Sunlit leaves" leftImage={PredictionPreviewUrl} rightImage={VisualNoCropPreviewUrl} rightImageLabel="Visual Spectrum" />
+                    :null} 
+                    </div> */}
+
+    
                     
-                    
-{/*                     
-                    {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : null}
-                    {PredictionPreviewUrl ? <img src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : null} */}
+                   
     
                 </div>}
         </Fragment>

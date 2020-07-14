@@ -11,7 +11,7 @@
     font-size: 2rem;
 }
 
-.imgNMeta{
+.ImgNmeta{
     display: flex;
     width: 100%;
     justify-content: center;
@@ -19,7 +19,7 @@
     padding: 5rem 0;
     flex-wrap: wrap;
 }
-.container{
+.Container{
     text-align: center;
     max-width: 45rem;
     min-width: 45rem;
@@ -30,23 +30,24 @@
     margin-right: 5rem;
 }
 
-.header{
+.Header{
     background: rgba(14,149,91,1);
     border-bottom: 4px solid white;
     padding: .5rem .2rem;
 }
 
-.imgName{
+.ImgName{
     font-size: 1.3rem;
     letter-spacing: .1rem;
     color: #fff;
 }
-.comparison{
+.Comparison{
     max-width: 45rem;
 }
 
-.buttons{
+.Buttons{
     align-self: flex-start;
     margin-left: 2rem;
     // flex-grow: 1;
 }
+
