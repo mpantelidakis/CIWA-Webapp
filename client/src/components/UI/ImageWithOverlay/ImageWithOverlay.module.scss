@@ -1,8 +1,30 @@
-.Overlay{
+.ImageWithOverlay{
+    margin: 0 auto;
     position: relative;
+    height: 35rem;
+    width: 52rem;
+    margin: 0 auto;
 }
+
+.Bg{
+    position: absolute;
+    top:0;
+    left:0;
+    max-height: 35rem;
+}
+
 .Leaves{
     position: absolute;
     top:0;
     left:0;
+    max-height: 35rem;
 }
+
+.Slider{
+   position: absolute;
+   top: 0;
+   left: 100%;
+}
+
+
+

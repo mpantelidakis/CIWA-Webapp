@@ -1,6 +1,5 @@
 .ControlPanel{
     width: 100%;
-    padding: 3rem 2rem;
     background-color: rgba(0, 0, 0, 0.041);
 }
 
@@ -9,6 +8,7 @@
     text-align: center;
     color: #0e955b;
     font-size: 2rem;
+    padding: 2rem 0;
 }
 
 .ImgNmeta{
@@ -18,6 +18,10 @@
     align-items: flex-start;
     padding: 5rem 0;
     flex-wrap: wrap;
+    background-color: rgba(0, 0, 0, 0.027);
+    border-top: 1px solid rgba(0, 0, 0, 0.102);
+    // border-bottom: 1px solid rgba(0, 0, 0, 0.102);
+
 }
 .Container{
     text-align: center;
@@ -28,6 +32,7 @@
     // padding-top: 1rem;
     // min-height: 32rem;
     margin-right: 5rem;
+    
 }
 
 .Header{
@@ -49,5 +54,11 @@
     align-self: flex-start;
     margin-left: 2rem;
     // flex-grow: 1;
+}
+
+.PredictionSection{
+    display: block;
+    padding: 5rem 0;
+    width: 100%;
 }
 

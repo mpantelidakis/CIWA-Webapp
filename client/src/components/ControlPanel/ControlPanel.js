@@ -169,7 +169,7 @@ const ControlPanel = props => {
                     <h1 className={classes.ControlTitle}>Control Panel</h1>
                     {/* <img src={VisualPreviewUrl}/> */}
 
-                    <div className={classes.ImgNmeta}>
+                    <section className={classes.ImgNmeta}>
                         <div className={classes.Container}>
                 
                             <div className={classes.Header}>
@@ -188,9 +188,13 @@ const ControlPanel = props => {
                             <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="small" /><span>Download temperature data</span></Button>
                             <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
                         </div>
-                    </div>
+                    </section>
 
-                    {VisualNoCropPreviewUrl && PredictionPreviewUrl ?<ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> : null}
+                    <section className={classes.PredictionSection}>
+                        {VisualNoCropPreviewUrl && PredictionPreviewUrl ?<ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> : null}
+                    </section>
+
+                    
                     {/* <div className={classes.Overlay}>
                         {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : null}
                         {PredictionPreviewUrl ? <img className={classes.Leaves} src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : null}

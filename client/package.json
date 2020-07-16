@@ -12,6 +12,7 @@
     "hamburger-react": "^2.1.1",
     "http-proxy-middleware": "^1.0.3",
     "prop-types": "^15.7.2",
+    "rc-slider": "^9.3.1",
     "react": "^16.13.1",
     "react-awesome-button": "^6.5.1",
     "react-axios": "^2.0.3",
@@ -47,6 +48,6 @@
     ]
   },
   "devDependencies": {
-    "node-sass": "^4.13.1"
+    "node-sass": "^4.14.1"
   }
 }
