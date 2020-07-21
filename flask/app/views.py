@@ -17,6 +17,10 @@ from flask_pymongo import pymongo
 
 import pprint
 
+from bson.binary import Binary
+import pickle
+from scripts.utility.utility import NumpyEncoder, crop_mask_and_overlay_temps
+
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 dbfiles = mongo.db.files
@@ -70,6 +74,7 @@ def paginate(offset, limit):
 		
 		for image in images:
 			image.pop('_id') # _id is not json serializable
+			image.pop('temps') # binary is not json serializable
 			output.append(image)
 	
 	next_url = {
@@ -134,7 +139,7 @@ class FileList(Resource):
 				fie = FlirImageExtractor(is_debug = True, provided_metadata=json_meta)
 				metadata_dictionary = modify_metadata(save_path, fie)
 				fie.process_image(save_path)
-				w, h = fie.save_images()
+				w, h, thermal_np = fie.save_images()
 				fie.export_data_to_csv()
 
 				# Emissivity is float in the original image, but not when we send it via form
@@ -168,6 +173,8 @@ class FileList(Resource):
 			# Append a message to the response object
 
 			if metadata:
+
+				
 				# Save the file info in the db
 				file_entry = {
 					'file_name': filename,
@@ -176,6 +183,9 @@ class FileList(Resource):
 					'cropped_width': w,
 					'cropped_height': h
 				}
+
+				# convert the numpy array of temperatures to binary so it can be stored in the mongodb
+				file_entry['temps'] = Binary(pickle.dumps(thermal_np, protocol=2), subtype=128 )
 
 				# If image name exists, replace it. If it does not, create it.
 				check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
@@ -226,7 +236,12 @@ class File(Resource):
 
 		files = dbfiles.find_one({"file_name": filename})
 		if files:
+			# get record from mongodb, convert Binary to numpy array
+			temps_np = pickle.loads(files['temps'])
 			files.pop('_id') # _id is not json serializable
+			files.pop('temps')
+			# ndarray is not json serializable, convert to list
+			files['temps']= json.dumps(temps_np, cls=NumpyEncoder)
 			resp = jsonify(files)
 			resp.status_code = 200
 			return resp
@@ -271,7 +286,23 @@ class Predict(Resource):
 			pred = Predictor(image=path)
 			has_mask = pred.predictNsave()
 
+			# get record from mongodb, convert Binary to numpy array
+			#TODO move all this logic to a new endpoint
+			temps_np = pickle.loads(files['temps'])
+			crop_w = files['cropped_width']
+			crop_h = files['cropped_height']
+			mask_path = os.path.join(app.config['UPLOAD_FOLDER'], 'Predictions', filename.replace('.jpg', '_pred.png'))
+
+			print("Numpy array of temperatures: ", temps_np)
+			print("Mask file path: ", mask_path)
+			print("Crop width: ", crop_w)
+			print("Crop height: ", crop_h)
+			# crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h)
+
+
 			dbfiles.update_one({"file_name": filename }, { "$set": { "has_mask": has_mask } })
+
+			
 
 			resp = jsonify({"msg":"Ran the file through the FRRN model."})
 			resp.status_code = 200

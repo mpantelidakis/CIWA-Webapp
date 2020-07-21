@@ -24,6 +24,8 @@ from itertools import zip_longest
 
 import numpy as np
 
+from scripts.utility.utility import image_downscale, crop_image_only_outside
+
 
 
 class FlirImageExtractor:
@@ -297,7 +299,7 @@ class FlirImageExtractor:
 
         
 
-        self.cropped_visual_np = self.crop_image_only_outside(rgb_np, 30)
+        self.cropped_visual_np = crop_image_only_outside(rgb_np, 30)
 
         cropped_img_visual = Image.fromarray(self.cropped_visual_np)
 
@@ -329,7 +331,7 @@ class FlirImageExtractor:
         cropped_img_visual.save(visual_image_path)
         img_thermal.save(thermal_image_path)
 
-        return widthDiff, heightDiff
+        return widthDiff, heightDiff, thermal_np
 
     def export_data_to_csv(self):
         """
@@ -341,7 +343,7 @@ class FlirImageExtractor:
         fn_prefix, _ = os.path.splitext(self.flir_img_filename)
         csv_path = os.path.join(fn_prefix.replace('Flir_Images','Csv_Files')+'.csv')
         
-        downscaled_visual_np = self.image_downscale()
+        downscaled_visual_np = image_downscale(self.cropped_visual_np, 80, 60)
         # list of pixel coordinates and thermal values
         coords_and_thermal_values = []
         for e in np.ndenumerate(self.thermal_image_np):
@@ -373,50 +375,8 @@ class FlirImageExtractor:
             writer.writerow(['x', 'y', 'Temp(c)', 'R', 'G', 'B'])
             writer.writerows(formatted_flat_list)
 
-    def crop_center(self, img, cropx, cropy):
-        """
-        Crop the image to the given dimensions
-        :return:
-        """
-        y, x, z = img.shape
-        startx = x // 2 - (cropx // 2)
-        starty = y // 2 - (cropy // 2)
-        return img[starty:starty + cropy, startx:startx + cropx]
 
 
-    def crop_image_only_outside(self, img, tol=0):
-        """
-        Dynamic cropping of black bounding box
-
-        Keyword arguments:
-        img -- numpy array
-        tol -- tolerance, how much away from total black (default 0)
-        :return:
-        """
-        mask = img>tol
-        if img.ndim==3:
-            mask = mask.all(2)
-        m,n = mask.shape
-        mask0,mask1 = mask.any(0),mask.any(1)
-        col_start,col_end = mask0.argmax(),n-mask0[::-1].argmax()
-        row_start,row_end = mask1.argmax(),m-mask1[::-1].argmax()
-        return img[row_start:row_end,col_start:col_end]
-
-    def image_downscale(self):
-        """
-        Downscale the rgb image to 60x80 resolution
-        to match the thermal image's resolution
-        and save it
-        :return:
-        """
-        width = 80
-        height = 60
-        dim = (width, height)
-
-        # resize the rgb image
-        resized_visual_np = cv.resize(self.cropped_visual_np, dim, interpolation=cv.INTER_AREA)
-
-        return resized_visual_np
 
     # def create_subfolder(self):
     #     """

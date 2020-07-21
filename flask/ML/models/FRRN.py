@@ -138,7 +138,7 @@ def build_frrn(inputs, num_classes, preset_model='FRRN-A'):
         net = ResidualUnit(net, n_filters=48, filter_size=3)
         net = ResidualUnit(net, n_filters=48, filter_size=3)
 
-        net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None, scope='logits')
+        net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None, scope='logits', reuse=tf.AUTO_REUSE)
         return net
 
         
