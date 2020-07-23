@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import sadLeaf from '../../assets/images/sad-leaf.png';
 
 import classes from './NotFound.module.scss'

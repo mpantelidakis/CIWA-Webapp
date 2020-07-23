@@ -1,7 +1,7 @@
-import React, {useEffect , useState, Fragment } from 'react'
+import React, { useState } from 'react'
 import classes from './ImageWithOverlay.module.scss'
 
-import Slider, { Range } from 'rc-slider';
+import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 
@@ -11,7 +11,7 @@ const ImageWithOverlay = props => {
     const [opacity, setOpacity] = useState(0.5)
     
 
-    const createSliderWithTooltip = Slider.createSliderWithTooltip;
+    // const createSliderWithTooltip = Slider.createSliderWithTooltip;
 
     return (
         

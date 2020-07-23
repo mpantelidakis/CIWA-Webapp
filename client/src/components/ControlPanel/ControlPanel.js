@@ -1,7 +1,7 @@
 import React, {useEffect , useState, Fragment } from 'react'
 import axios from '../../axios-orders'
 import ReactCompareImage from 'react-compare-image';
-import { AwesomeButton } from "react-awesome-button";
+// import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/src/styles/styles.scss";
 
 import NotFound from '../NotFound/NotFound'
@@ -21,6 +21,10 @@ import Button from '../UI/Button/Button'
 import ImageWithOverlay from '../UI/ImageWithOverlay/ImageWithOverlay'
 import classes from './ControlPanel.module.scss'
 
+import { Histogram } from '../Visualization/Histogram/Histogram'
+
+import { Category, ChartComponent, Legend, DataLabel, ColumnSeries, Inject, LineSeries, SeriesCollectionDirective, SeriesDirective, Tooltip } from '@syncfusion/ej2-react-charts';
+
 
 const ControlPanel = props => {
 
@@ -33,6 +37,20 @@ const ControlPanel = props => {
     const [VisualNoCropPreviewUrl, setVisualNoCropPreviewUrl] = useState(null);
 
     const [imageNotFound, setImageNotFound] = useState(false)
+
+    let data = [
+        { month: 'Jan', sales: 35 }, { month: 'Feb', sales: 28 },
+        { month: 'Mar', sales: 34 }, { month: 'Apr', sales: 32 },
+        { month: 'May', sales: 40 }, { month: 'Jun', sales: 32 },
+        { month: 'Jul', sales: 35 }, { month: 'Aug', sales: 55 },
+        { month: 'Sep', sales: 38 }, { month: 'Oct', sales: 30 },
+        { month: 'Nov', sales: 25 }, { month: 'Dec', sales: 32 }
+    ];
+
+    let primaryxAxis = { valueType: 'Category' };
+    let primaryyAxis = { labelFormat: '${value}K' };
+    let legendSettings = { visible: true };
+    let marker = { dataLabel: { visible: true } }
 
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
@@ -190,9 +208,11 @@ const ControlPanel = props => {
                         </div>
                     </section>
 
-                    <section className={classes.PredictionSection}>
-                        {VisualNoCropPreviewUrl && PredictionPreviewUrl ?<ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> : null}
-                    </section>
+                    {VisualNoCropPreviewUrl && PredictionPreviewUrl ?
+                        <section className={classes.PredictionSection}>
+                            <ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> 
+                        </section>
+                    : null}
 
                     
                     {/* <div className={classes.Overlay}>
@@ -202,11 +222,19 @@ const ControlPanel = props => {
                     <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Sunlit leaves" leftImage={PredictionPreviewUrl} rightImage={VisualNoCropPreviewUrl} rightImageLabel="Visual Spectrum" />
                     :null} 
                     </div> */}
+                    
+                    {/* <ChartComponent id="charts2" primaryXAxis={primaryxAxis} primaryYAxis={primaryyAxis}  
+                    title='Sales Analysis'  legendSettings={legendSettings}>
+      <Inject services={[ColumnSeries, DataLabel, Tooltip, LineSeries, Category, Legend]}/>
+      <SeriesCollectionDirective>
+        <SeriesDirective dataSource={data} xName='month' yName='sales' name='Sales' marker={marker}/>
+      </SeriesCollectionDirective>
+    </ChartComponent>; */}
 
     
                     
                    
-    
+                <Histogram/>
                 </div>}
         </Fragment>
         

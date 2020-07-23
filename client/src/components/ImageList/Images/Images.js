@@ -1,7 +1,7 @@
 import React, {useEffect , useState, Fragment } from 'react'
 import ReactCompareImage from 'react-compare-image';
 
-import { base, Technology, Next, Action, Configure, Services } from 'grommet-icons';
+import { base, Services } from 'grommet-icons';
 import { ThemeProvider }  from 'styled-components';
 import { deepMerge } from "grommet-icons/utils";
  

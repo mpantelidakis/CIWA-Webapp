@@ -3,7 +3,7 @@ import axios from '../../axios-orders'
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/src/styles/styles.scss";
 
-import { Circle, Heart, Orbitals, Ouroboro, Roller, Spinner, Ripple, Ring } from 'react-spinners-css';
+import { Spinner } from 'react-spinners-css';
 
 import "../UI/btn-awsome-style.scss"
 
