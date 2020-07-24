@@ -58,8 +58,6 @@ class FlirImageExtractor:
         self.cropped_visual_np = None
         self.thermal_image_np = None
 
-        self.thermal_np = None
-
     pass
 
 
