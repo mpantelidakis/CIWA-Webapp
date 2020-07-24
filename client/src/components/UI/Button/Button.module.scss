@@ -25,24 +25,24 @@
     transition: all .15s ease-in-out;
     
     &:hover {
-        border-bottom: 1px solid rgb(8, 109, 38);
-        transform: translateX(1rem);
+        // border-bottom: 1px solid rgb(8, 109, 38);
+        transform: translate(.5rem);
     }
 
     &:active {
-        transform: translateX(1rem) translateY(.6rem);
+        transform: translateX(.5rem) translateY(.3rem);
     }
 }
 
 .Danger {
 
         &:hover {
-            border-bottom: 1px solid rgb(136, 8, 8);
-            transform: translateX(1rem);
+            // border-bottom: 1px solid rgb(136, 8, 8);
+            transform: translate(.5rem);
         }
 
         &:active {
-            transform: translateX(1rem) translateY(.6rem);
+            transform: translate(.5rem) translateY(.3rem);
         }
 }
 

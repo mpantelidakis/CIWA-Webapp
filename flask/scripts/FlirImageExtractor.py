@@ -58,6 +58,8 @@ class FlirImageExtractor:
         self.cropped_visual_np = None
         self.thermal_image_np = None
 
+        self.thermal_np = None
+
     pass
 
 
@@ -331,7 +333,15 @@ class FlirImageExtractor:
         cropped_img_visual.save(visual_image_path)
         img_thermal.save(thermal_image_path)
 
-        return widthDiff, heightDiff, thermal_np
+        #Move this to function
+        flat_thermal_np = thermal_np.flatten()
+        minTemp = min(flat_thermal_np)
+        maxTemp = max(flat_thermal_np)
+
+        if self.is_debug:
+            print("Debug: min and max temps : Min {} Max {}".format(minTemp,maxTemp))
+
+        return widthDiff, heightDiff, thermal_np, minTemp, maxTemp
 
     def export_data_to_csv(self):
         """

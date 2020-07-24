@@ -139,7 +139,7 @@ class FileList(Resource):
 				fie = FlirImageExtractor(is_debug = True, provided_metadata=json_meta)
 				metadata_dictionary = modify_metadata(save_path, fie)
 				fie.process_image(save_path)
-				w, h, thermal_np = fie.save_images()
+				w, h, thermal_np, minTemp, maxTemp = fie.save_images()
 				fie.export_data_to_csv()
 
 				# Emissivity is float in the original image, but not when we send it via form
@@ -181,7 +181,9 @@ class FileList(Resource):
 					'metadata': metadata_dictionary,
 					'has_mask': False,
 					'cropped_width': w,
-					'cropped_height': h
+					'cropped_height': h,
+					'min_temp': minTemp,
+					'max_temp': maxTemp
 				}
 
 				# convert the numpy array of temperatures to binary so it can be stored in the mongodb

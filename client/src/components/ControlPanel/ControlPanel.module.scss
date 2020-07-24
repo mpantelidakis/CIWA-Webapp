@@ -1,15 +1,42 @@
+// #00bdad graph
+
 .ControlPanel{
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.041);
+    // background-color: rgba(0, 0, 0, 0.041);
+    // background-color: rgb(248, 246, 242);
+}
+
+.CPnButtons{
+    display: inline-flex;
+    padding-right: 1rem;
+    // padding-bottom: 1rem;
+    border-bottom-right-radius: 1rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.219);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.219);
+    // background-color: rgb(3, 13, 70);
 }
 
 .ControlTitle{
-    display: block;
-    text-align: center;
-    color: #0e955b;
-    font-size: 2rem;
-    padding: 2rem 0;
+    display: inline-block;
+    // text-align: center;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 1rem;
+    background-color: rgb(37, 37, 37);
 }
+
+.Buttons{
+    display: flex;
+    color: #fff;
+    // margin-left: auto;
+
+    &>*{
+        &:not(:last-child){
+            // margin-right: 1rem;
+        }
+    }
+}
+
 
 .ImgNmeta{
     display: flex;
@@ -18,7 +45,7 @@
     align-items: flex-start;
     padding: 5rem 0;
     flex-wrap: wrap;
-    background-color: rgba(0, 0, 0, 0.027);
+    // background-color: rgba(0, 0, 0, 0.027);
     border-top: 1px solid rgba(0, 0, 0, 0.102);
     // border-bottom: 1px solid rgba(0, 0, 0, 0.102);
 
@@ -50,15 +77,13 @@
     max-width: 45rem;
 }
 
-.Buttons{
-    align-self: flex-start;
-    margin-left: 2rem;
-    // flex-grow: 1;
-}
-
 .PredictionSection{
     display: block;
     padding: 5rem 0;
     width: 100%;
 }
 
+.HistogramWrapper{
+    padding: 2rem 5rem;
+    // background-color: rgb(47, 47, 47);
+}

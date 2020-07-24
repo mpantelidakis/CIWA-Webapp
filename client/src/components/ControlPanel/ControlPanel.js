@@ -38,19 +38,9 @@ const ControlPanel = props => {
 
     const [imageNotFound, setImageNotFound] = useState(false)
 
-    let data = [
-        { month: 'Jan', sales: 35 }, { month: 'Feb', sales: 28 },
-        { month: 'Mar', sales: 34 }, { month: 'Apr', sales: 32 },
-        { month: 'May', sales: 40 }, { month: 'Jun', sales: 32 },
-        { month: 'Jul', sales: 35 }, { month: 'Aug', sales: 55 },
-        { month: 'Sep', sales: 38 }, { month: 'Oct', sales: 30 },
-        { month: 'Nov', sales: 25 }, { month: 'Dec', sales: 32 }
-    ];
-
-    let primaryxAxis = { valueType: 'Category' };
-    let primaryyAxis = { labelFormat: '${value}K' };
-    let legendSettings = { visible: true };
-    let marker = { dataLabel: { visible: true } }
+    const [temperatureArray, setTemperatureArray] = useState([])
+    const [minTemp, setMinTemp] = useState(0)
+    const [maxTemp, setMaxTemp] = useState(0)
 
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
@@ -117,6 +107,15 @@ const ControlPanel = props => {
                             setVisualPreviewUrl(URL.createObjectURL(responseVisual.data))
                             setThermalPreviewUrl(URL.createObjectURL(responseThermal.data))
                         })
+
+                        let hugeString = res.data['temps'].replace(/[\[\]]/g, '')
+                        let tmpArray = hugeString.match(/[+-]?((\d+\.?\d*)|(\.\d+))/g).map(Number)
+                        console.log(tmpArray)
+                        setTemperatureArray([...tmpArray])
+                        setMinTemp(res.data['min_temp'])
+                        setMaxTemp(res.data['max_temp'])
+
+                        
                     })
                     .catch(errors => {
                         setImageNotFound(true)
@@ -184,9 +183,22 @@ const ControlPanel = props => {
         <Fragment>
             {imageNotFound ? <NotFound>Error 404, image not found.</NotFound> : 
                 <div className={classes.ControlPanel}>
-                    <h1 className={classes.ControlTitle}>Control Panel</h1>
+
+                    <div className={classes.CPnButtons}>
+                        <h1 className={classes.ControlTitle}>Control Panel</h1>
+                        <div className={classes.Buttons}>
+                                <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="small" /><span>Delete</span></Button>
+                                <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="small" /><span>Download temperature data</span></Button>
+                                <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
+                        </div>
+                    </div>
+                    
                     {/* <img src={VisualPreviewUrl}/> */}
 
+                    <div className={classes.HistogramWrapper}>
+                     { FlirPreviewUrl  && temperatureArray ? <Histogram series={temperatureArray} min={minTemp} max={maxTemp}/> : null}
+                    </div>
+                    
                     <section className={classes.ImgNmeta}>
                         <div className={classes.Container}>
                 
@@ -201,12 +213,11 @@ const ControlPanel = props => {
                             </div>  
                         </div>
                         {metadata? <Table data={metadata}>Image metadata</Table> : null}
-                        <div className={classes.Buttons}>
-                            <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="small" /><span>Delete</span></Button>
-                            <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="small" /><span>Download temperature data</span></Button>
-                            <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
-                        </div>
+                      
                     </section>
+
+
+                   
 
                     {VisualNoCropPreviewUrl && PredictionPreviewUrl ?
                         <section className={classes.PredictionSection}>
@@ -214,27 +225,6 @@ const ControlPanel = props => {
                         </section>
                     : null}
 
-                    
-                    {/* <div className={classes.Overlay}>
-                        {VisualNoCropPreviewUrl ? <img src={VisualNoCropPreviewUrl} alt={`Img-flir${props.id}`}/> : null}
-                        {PredictionPreviewUrl ? <img className={classes.Leaves} src={PredictionPreviewUrl} alt={`Img-pred${props.id}`}/> : null}
-                     {PredictionPreviewUrl && VisualNoCropPreviewUrl ? 
-                    <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Sunlit leaves" leftImage={PredictionPreviewUrl} rightImage={VisualNoCropPreviewUrl} rightImageLabel="Visual Spectrum" />
-                    :null} 
-                    </div> */}
-                    
-                    {/* <ChartComponent id="charts2" primaryXAxis={primaryxAxis} primaryYAxis={primaryyAxis}  
-                    title='Sales Analysis'  legendSettings={legendSettings}>
-      <Inject services={[ColumnSeries, DataLabel, Tooltip, LineSeries, Category, Legend]}/>
-      <SeriesCollectionDirective>
-        <SeriesDirective dataSource={data} xName='month' yName='sales' name='Sales' marker={marker}/>
-      </SeriesCollectionDirective>
-    </ChartComponent>; */}
-
-    
-                    
-                   
-                <Histogram/>
                 </div>}
         </Fragment>
         
