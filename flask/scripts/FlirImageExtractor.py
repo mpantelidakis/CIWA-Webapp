@@ -306,7 +306,6 @@ class FlirImageExtractor:
         widthDiff = img_visual.size[0] - cropped_img_visual.size[0]
         heightDiff = img_visual.size[1] - cropped_img_visual.size[1]
 
-        #TODO SAVE THESE IN THE DB SO I CAN INSTACROP THE MASK
         if self.is_debug:
             print("Debug: DIff: {} x {}".format(widthDiff,heightDiff))
 

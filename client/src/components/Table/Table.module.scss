@@ -1,6 +1,3 @@
-.Container{
-    // padding: 5rem;
-}
 
 .Title{
     text-align: center;
@@ -24,9 +21,10 @@
     font-weight: 100;
   }
   
-  .Table tr:nth-child(even){background-color: #f2f2f2;}
+  .Table tr:nth-child(even){background-color: #f3f0f0;}
+  .Table tr:nth-child(odd){background-color: #fff}
   
-  .Table tr:hover {background-color: #ddd;}
+  .Table tr:hover {background-color: #ddd; color: black;}
 
   .Table th {
     background: rgba(14,149,91,1);

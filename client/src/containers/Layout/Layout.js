@@ -3,6 +3,7 @@ import classes from './Layout.module.scss'
 
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar'
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer'
+import Footer from '../../components/Footer/Footer'
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,6 +37,7 @@ const Layout = (props) => {
                 <ToastContainer className="responsive-toast" />
                 {props.children}
             </main>
+            <Footer/>
         </Fragment>
     )
 }

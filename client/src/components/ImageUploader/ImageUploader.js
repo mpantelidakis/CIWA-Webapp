@@ -178,10 +178,10 @@ const ImageUploader = props => {
         })
         .then(res => {
 
-            console.log(res.data.metadata);
+            // console.log(res.data.metadata);
             setImageMetadata(res.data.metadata);
             syncForm(res.data.metadata);
-            console.log(res.data.msg);
+            // console.log(res.data.msg);
 
         })
         .catch(error => {

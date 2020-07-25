@@ -16,7 +16,7 @@ export const Histogram = props => {
     const [chartData, setChartData] = useState([])
 
     useEffect(() => {
-        console.log(props.series)
+        // console.log(props.series)
         // setMin(Math.min( ...props.series ))
         // setMax(Math.max( ...props.series ))
         props.series.map((value) => {
@@ -54,7 +54,7 @@ export const Histogram = props => {
                         <SeriesCollectionDirective>
                             <SeriesDirective dataSource={chartData} yName='y' fill={'#0e955b'} name='Temp Occurence' type='Histogram' 
                                 marker={{ dataLabel: { visible: true, position: 'Top', font: { fontWeight: '600', color: '#ffffff' } } }} 
-                                showNormalDistribution={false} columnWidth={0.99} binInterval={1}>
+                                showNormalDistribution={false} columnWidth={0.99} binInterval={Browser.isDevice ? 5: 1}>
                             </SeriesDirective>
                         </SeriesCollectionDirective>
                     </ChartComponent>

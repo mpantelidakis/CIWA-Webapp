@@ -29,24 +29,6 @@ function App() {
       <Redirect to="/"/>
     </Switch>
   )
-
-  // const fetchData = async () => {
-    
-  //       axios.get('http://localhost:5000/api/files', {
-          
-  //       })
-  //       .then(function (response) {
-  //         console.log(response);
-  //         setFiles(response.data)
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       })
-  //       .then(function () {
-  //         // always executed
-  //       });  
-  // }
-
   return (
     <div>
       <Layout>

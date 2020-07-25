@@ -1,29 +1,23 @@
 .ImageWithOverlay{
-    margin: 0 auto;
-    position: relative;
-    height: 35rem;
-    width: 52rem;
-    margin: 0 auto;
+    display: flex; /* required */
+    flex-flow: row nowrap; /* required */
 }
 
-.Bg{
-    position: absolute;
-    top:0;
-    left:0;
-    max-height: 35rem;
+.Bg,
+.Leaves {
+    width: 94%; /* required */
+    flex: none; /* required */
 }
 
 .Leaves{
-    position: absolute;
-    top:0;
-    left:0;
-    max-height: 35rem;
+    margin-left: -94%; /* required */
 }
 
 .Slider{
-   position: absolute;
-   top: 0;
-   left: 100%;
+    width: 5%; /* required */
+    flex: none; /* required */
+    margin-left: 4%; /* required */
+    height: auto !important;
 }
 
 

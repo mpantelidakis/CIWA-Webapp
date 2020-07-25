@@ -23,8 +23,6 @@ import classes from './ControlPanel.module.scss'
 
 import { Histogram } from '../Visualization/Histogram/Histogram'
 
-import { Category, ChartComponent, Legend, DataLabel, ColumnSeries, Inject, LineSeries, SeriesCollectionDirective, SeriesDirective, Tooltip } from '@syncfusion/ej2-react-charts';
-
 
 const ControlPanel = props => {
 
@@ -110,7 +108,7 @@ const ControlPanel = props => {
 
                         let hugeString = res.data['temps'].replace(/[\[\]]/g, '')
                         let tmpArray = hugeString.match(/[+-]?((\d+\.?\d*)|(\.\d+))/g).map(Number)
-                        console.log(tmpArray)
+                        // console.log(tmpArray)
                         setTemperatureArray([...tmpArray])
                         setMinTemp(res.data['min_temp'])
                         setMaxTemp(res.data['max_temp'])
@@ -164,7 +162,7 @@ const ControlPanel = props => {
         axios.get('mediafiles/csv/' + imageName.replace('.jpg','.csv'), {
             responseType: 'blob'
         }).then(res => {
-            console.log(res)
+            // console.log(res)
             var filename = /[^/]*$/.exec(res.headers['content-disposition'])[0];
             let url = URL.createObjectURL(res.data);
             let a = document.createElement("a");
@@ -187,20 +185,26 @@ const ControlPanel = props => {
                     <div className={classes.CPnButtons}>
                         <h1 className={classes.ControlTitle}>Control Panel</h1>
                         <div className={classes.Buttons}>
-                                <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="small" /><span>Delete</span></Button>
-                                <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="small" /><span>Download temperature data</span></Button>
-                                <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="small" /><span>Find sunlit leaves</span></Button>
+                                <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="medium" /><span>Delete</span></Button>
+                                <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="medium" /><span>Download temperature data</span></Button>
+                                <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="medium" /><span>Find sunlit leaves</span></Button>
                         </div>
                     </div>
                     
                     {/* <img src={VisualPreviewUrl}/> */}
 
-                    <div className={classes.HistogramWrapper}>
-                     { FlirPreviewUrl  && temperatureArray ? <Histogram series={temperatureArray} min={minTemp} max={maxTemp}/> : null}
-                    </div>
+                   
+                     { FlirPreviewUrl  && temperatureArray ? 
+                        <div className={classes.HistogramWrapper}>
+                            <p className={classes.Hint_no_margin}>The true thermal image is 60x80, so 4800 pixels in total.</p>
+                            <Histogram series={temperatureArray} min={minTemp} max={maxTemp}/>
+                        </div> 
+                    : null}
+                    
                     
                     <section className={classes.ImgNmeta}>
                         <div className={classes.Container}>
+                            <p className={classes.Hint}>Left: Flir image 640x480.<br/>Right: Generated Visual Spectrum Image (without the black surrounding box)<br/>Use the slider in the middle to compare the images.</p>
                 
                             <div className={classes.Header}>
                                 <p className={classes.ImgName}>{imageName}</p>
@@ -212,18 +216,27 @@ const ControlPanel = props => {
                                 :null}
                             </div>  
                         </div>
-                        {metadata? <Table data={metadata}>Image metadata</Table> : null}
+                        {VisualNoCropPreviewUrl && PredictionPreviewUrl ?
+                        <div className={classes.Prediction}>
+                            <p className={classes.Hint}>Leaves are painted with yellow color. Use the slider on the right to adjust the opacity of the generated mask.</p>
+                            <ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> 
+                        </div>
+                         : null}
+                        {metadata? <div className={classes.TableWrapper}>
+                            <p className={classes.Hint}>Metadata found in the Flir image.</p>
+                            <Table data={metadata}>Image metadata</Table>
+                        </div> : null}
+                        
                       
+                    </section>
+                    <section className={classes.Analytics}>
+                        
                     </section>
 
 
                    
 
-                    {VisualNoCropPreviewUrl && PredictionPreviewUrl ?
-                        <section className={classes.PredictionSection}>
-                            <ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> 
-                        </section>
-                    : null}
+                   
 
                 </div>}
         </Fragment>
