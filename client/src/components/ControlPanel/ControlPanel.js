@@ -40,6 +40,8 @@ const ControlPanel = props => {
     const [minTemp, setMinTemp] = useState(0)
     const [maxTemp, setMaxTemp] = useState(0)
 
+    const [meanLeafTemp, setMeanLeafTemp] = useState(null)
+
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
     //     params: {
@@ -112,6 +114,7 @@ const ControlPanel = props => {
                         setTemperatureArray([...tmpArray])
                         setMinTemp(res.data['min_temp'])
                         setMaxTemp(res.data['max_temp'])
+                        setMeanLeafTemp(res.data['mean_sunlit_temp'])
 
                         
                     })
@@ -136,7 +139,7 @@ const ControlPanel = props => {
     const predictHandler = () => {
         axios.get('api/predict/' + imageName)
         .then(res => {
-            console.log(res.data.msg)
+            console.log(res.data)
             Promise.all([
                 axios.get('mediafiles/predictions/' + props.match.params['imageName'].replace('.jpg','_pred.png') , { 
                     responseType: 'blob'
@@ -151,6 +154,7 @@ const ControlPanel = props => {
                 setPredictionPreviewUrl(URL.createObjectURL(responsePred.data))
                 setVisualNoCropPreviewUrl(URL.createObjectURL(responseVisualNoCrop.data))
             })
+            setMeanLeafTemp(res.data['mean_sunlit_temp'])
         })
         .catch(error => {
             //The interceptor of the hoc handles the exception
@@ -216,10 +220,10 @@ const ControlPanel = props => {
                                 :null}
                             </div>  
                         </div>
-                        {VisualNoCropPreviewUrl && PredictionPreviewUrl ?
+                        {VisualPreviewUrl && PredictionPreviewUrl ?
                         <div className={classes.Prediction}>
                             <p className={classes.Hint}>Leaves are painted with yellow color. Use the slider on the right to adjust the opacity of the generated mask.</p>
-                            <ImageWithOverlay bg={VisualNoCropPreviewUrl} overlay={PredictionPreviewUrl}/> 
+                            <ImageWithOverlay bg={VisualPreviewUrl} overlay={PredictionPreviewUrl}/> 
                         </div>
                          : null}
                         {metadata? <div className={classes.TableWrapper}>
@@ -230,7 +234,7 @@ const ControlPanel = props => {
                       
                     </section>
                     <section className={classes.Analytics}>
-                        
+                        {meanLeafTemp ? <p classname={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature: <span className={classes.MeanLeafTempSpan}>{meanLeafTemp}</span></p> : null}
                     </section>
 
 

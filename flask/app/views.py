@@ -75,6 +75,7 @@ def paginate(offset, limit):
 		for image in images:
 			image.pop('_id') # _id is not json serializable
 			image.pop('temps') # binary is not json serializable
+			image.pop('leaf_temps') # binary is not json serializable
 			output.append(image)
 	
 	next_url = {
@@ -183,7 +184,8 @@ class FileList(Resource):
 					'cropped_width': w,
 					'cropped_height': h,
 					'min_temp': minTemp,
-					'max_temp': maxTemp
+					'max_temp': maxTemp,
+					'leaf_temps': False
 				}
 
 				# convert the numpy array of temperatures to binary so it can be stored in the mongodb
@@ -238,12 +240,20 @@ class File(Resource):
 
 		files = dbfiles.find_one({"file_name": filename})
 		if files:
+			
+			
+			files.pop('_id') # _id is not json serializable
+
 			# get record from mongodb, convert Binary to numpy array
 			temps_np = pickle.loads(files['temps'])
-			files.pop('_id') # _id is not json serializable
 			files.pop('temps')
 			# ndarray is not json serializable, convert to list
 			files['temps']= json.dumps(temps_np, cls=NumpyEncoder)
+
+			if files['leaf_temps']:
+				leaf_temps_np = pickle.loads(files['leaf_temps'])
+				files.pop('leaf_temps')
+				files['leaf_temps']= json.dumps(leaf_temps_np, cls=NumpyEncoder)
 			resp = jsonify(files)
 			resp.status_code = 200
 			return resp
@@ -283,30 +293,40 @@ class Predict(Resource):
 		if files:
 			path = os.path.join(app.config['UPLOAD_FOLDER'],"Visual_Images_nocrop", filename)
 
-			print(path)
+			if files['has_mask'] == False:
 
-			pred = Predictor(image=path)
-			has_mask = pred.predictNsave()
+				pred = Predictor(image=path)
+				has_mask = pred.predictNsave()
+				
+				# get record from mongodb, convert Binary to numpy array
+				#TODO move all this logic to a new endpoint
+				temps_np = pickle.loads(files['temps'])
+				crop_w = files['cropped_width']
+				crop_h = files['cropped_height']
+				at = files['metadata']['AtmosphericTemperature']
+				mask_path = os.path.join(app.config['UPLOAD_FOLDER'], 'Predictions', filename.replace('.jpg', '_pred.png'))
 
-			# get record from mongodb, convert Binary to numpy array
-			#TODO move all this logic to a new endpoint
-			temps_np = pickle.loads(files['temps'])
-			crop_w = files['cropped_width']
-			crop_h = files['cropped_height']
-			mask_path = os.path.join(app.config['UPLOAD_FOLDER'], 'Predictions', filename.replace('.jpg', '_pred.png'))
+				# print("Numpy array of temperatures: ", temps_np)
+				# print("Mask file path: ", mask_path)
+				# print("Crop width: ", crop_w)
+				# print("Crop height: ", crop_h)
+				mean_sunlit_temp, leaves_np = crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at, 5, 5)
 
-			print("Numpy array of temperatures: ", temps_np)
-			print("Mask file path: ", mask_path)
-			print("Crop width: ", crop_w)
-			print("Crop height: ", crop_h)
-			# crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h)
+				# convert the numpy array of temperatures to binary so it can be stored in the mongodb
+				leaf_temps = Binary(pickle.dumps(leaves_np, protocol=2), subtype=128 )
 
+				dbfiles.update_one({"file_name": filename}, {"$set": {"has_mask": has_mask , "mean_sunlit_temp": mean_sunlit_temp, "leaf_temps": leaf_temps}})
 
-			dbfiles.update_one({"file_name": filename }, { "$set": { "has_mask": has_mask } })
-
+				resp = {
+					'leaf_temps': json.dumps(leaves_np, cls=NumpyEncoder),
+					'mean_sunlit_temp' : mean_sunlit_temp,
+					'msg' :  "Ran the file through the FRRN model. Found sunlit leaves mean temperature."
+				}
+				resp = jsonify(resp)
+			else:
+				resp = jsonify({"msg":"Mask already generated."})
 			
-
-			resp = jsonify({"msg":"Ran the file through the FRRN model."})
+			
 			resp.status_code = 200
 			return resp
 
