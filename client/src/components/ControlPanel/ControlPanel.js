@@ -42,6 +42,8 @@ const ControlPanel = props => {
 
     const [meanLeafTemp, setMeanLeafTemp] = useState(null)
 
+    const [predSpinnerActive, setpredSpinnerActive] = useState(false)
+
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
     //     params: {
@@ -137,6 +139,7 @@ const ControlPanel = props => {
     }
 
     const predictHandler = () => {
+        setpredSpinnerActive(true)
         axios.get('api/predict/' + imageName)
         .then(res => {
             console.log(res.data)
@@ -155,6 +158,7 @@ const ControlPanel = props => {
                 setVisualNoCropPreviewUrl(URL.createObjectURL(responseVisualNoCrop.data))
             })
             setMeanLeafTemp(res.data['mean_sunlit_temp'])
+            setpredSpinnerActive(false)
         })
         .catch(error => {
             //The interceptor of the hoc handles the exception
@@ -225,7 +229,7 @@ const ControlPanel = props => {
                             <p className={classes.Hint}>Leaves are painted with yellow color. Use the slider on the right to adjust the opacity of the generated mask.</p>
                             <ImageWithOverlay bg={VisualPreviewUrl} overlay={PredictionPreviewUrl}/> 
                         </div>
-                         : null}
+                         : predSpinnerActive? <Spinner/> : null}
                         {metadata? <div className={classes.TableWrapper}>
                             <p className={classes.Hint}>Metadata found in the Flir image.</p>
                             <Table data={metadata}>Image metadata</Table>
