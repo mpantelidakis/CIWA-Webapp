@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@rooks/use-window-size": "^3.6.0",
     "@syncfusion/ej2-react-charts": "^18.2.46",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",

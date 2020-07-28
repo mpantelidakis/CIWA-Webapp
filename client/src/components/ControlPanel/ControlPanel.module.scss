@@ -45,7 +45,7 @@
     width: 100%;
     justify-content: space-evenly;
     align-items: flex-start;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     padding: 5rem 0;
     // background-color: rgba(0, 0, 0, 0.027);
     border-top: 1px solid rgba(0, 0, 0, 0.102);
@@ -60,10 +60,10 @@
 }
 .Container{
     text-align: center;
-    min-width: 45rem;
-    flex: 1 1 25%;
-    padding: 3rem 2.5rem;
-    
+    width: 100rem;
+    flex-shrink: 2;
+    padding: 3rem 5rem;
+    min-width: 50rem;
 }
 
 .Header{
@@ -82,14 +82,16 @@
 }
 
 .Prediction{
-    padding: 3rem 2.5rem;
-    min-width: 48rem;
-    flex: 1 0 35%;
+    padding: 3rem 5rem;
+    width: 100rem;
+    flex-shrink: 1;
+    min-width: 56rem;
 }
 
 .TableWrapper{
-    padding: 3rem 2.5rem;
-    flex-grow: 1;
+    padding: 3rem 5rem;
+    width: 100rem;
+    flex-shrink: 3;
 }
 
 .HistogramWrapper{
@@ -120,9 +122,61 @@
 
 }
 
-@media only screen and (max-width: 700px) {
+.ModalText{
+    // position: absolute;
+    font-size: 2.5rem;
+    letter-spacing: 1rem;
+    font-style: italic;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    padding-top: 1rem;
+
+    border-bottom: 2px solid #fff;
+    padding-bottom: 1rem;
+}
+
+@media only screen and (max-width: 1490px) {
+    .ImgNmeta{
+        flex-wrap: wrap;
+    }
+}
+
+
+@media only screen and (max-width: 1200px) {
     .HistogramWrapper{
         padding: 2rem 0;
         // background-color: rgb(47, 47, 47);
     }
+
+    .Prediction{
+        width: 80rem;
+    }
+
+    .Container{
+        width: 80rem;
+    }
+    .TableWrapper{
+        width: 80rem;
+    }
 }
+
+
+@media only screen and (max-width: 600px) {
+
+    .Container{
+        flex-grow: 1;
+        padding: 1rem 2.5rem;
+    }
+ 
+    .Prediction{
+        flex-grow: 1;
+        padding: 1rem 2.5rem;
+    }
+
+    .TableWrapper{
+        flex-grow: 1;
+        padding: 1rem 2.5rem;
+    }
+}
+

@@ -23,6 +23,10 @@ import classes from './ControlPanel.module.scss'
 
 import { Histogram } from '../Visualization/Histogram/Histogram'
 
+import ParticleImg from '../ParticleImg/ParticleImg'
+
+import Modal from '../UI/Modal/Modal'
+
 
 const ControlPanel = props => {
 
@@ -42,7 +46,9 @@ const ControlPanel = props => {
 
     const [meanLeafTemp, setMeanLeafTemp] = useState(null)
 
-    const [predSpinnerActive, setpredSpinnerActive] = useState(false)
+    const [predActive, setpredActive] = useState(false)
+
+    const [hasMask, setHasMask] = useState(false)
 
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
@@ -117,6 +123,7 @@ const ControlPanel = props => {
                         setMinTemp(res.data['min_temp'])
                         setMaxTemp(res.data['max_temp'])
                         setMeanLeafTemp(res.data['mean_sunlit_temp'])
+                        setHasMask(res.data['has_mask'])
 
                         
                     })
@@ -139,7 +146,7 @@ const ControlPanel = props => {
     }
 
     const predictHandler = () => {
-        setpredSpinnerActive(true)
+        setpredActive(true)
         axios.get('api/predict/' + imageName)
         .then(res => {
             console.log(res.data)
@@ -158,7 +165,8 @@ const ControlPanel = props => {
                 setVisualNoCropPreviewUrl(URL.createObjectURL(responseVisualNoCrop.data))
             })
             setMeanLeafTemp(res.data['mean_sunlit_temp'])
-            setpredSpinnerActive(false)
+            setpredActive(false)
+            setHasMask(true)
         })
         .catch(error => {
             //The interceptor of the hoc handles the exception
@@ -195,7 +203,7 @@ const ControlPanel = props => {
                         <div className={classes.Buttons}>
                                 <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="medium" /><span>Delete</span></Button>
                                 <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="medium" /><span>Download temperature data</span></Button>
-                                <Button btnType='Success' clicked={predictHandler}> <Technology color="plain" size="medium" /><span>Find sunlit leaves</span></Button>
+                                <Button btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" /><span>Find sunlit leaves</span></Button>
                         </div>
                     </div>
                     
@@ -229,7 +237,7 @@ const ControlPanel = props => {
                             <p className={classes.Hint}>Leaves are painted with yellow color. Use the slider on the right to adjust the opacity of the generated mask.</p>
                             <ImageWithOverlay bg={VisualPreviewUrl} overlay={PredictionPreviewUrl}/> 
                         </div>
-                         : predSpinnerActive? <Spinner/> : null}
+                         : null}
                         {metadata? <div className={classes.TableWrapper}>
                             <p className={classes.Hint}>Metadata found in the Flir image.</p>
                             <Table data={metadata}>Image metadata</Table>
@@ -240,6 +248,10 @@ const ControlPanel = props => {
                     <section className={classes.Analytics}>
                         {meanLeafTemp ? <p classname={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature: <span className={classes.MeanLeafTempSpan}>{meanLeafTemp}</span></p> : null}
                     </section>
+                    
+                    <Modal show={predActive}> <p className={classes.ModalText}>Detecting sunlit leaves. Please wait...</p>
+                    {predActive ? <ParticleImg img={VisualPreviewUrl}/> : null}</Modal>
+                   
 
 
                    
