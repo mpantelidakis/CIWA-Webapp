@@ -13,7 +13,7 @@ import ParticleImage, {
 const round = (n: number, step = 20) => Math.ceil(n / step) * step;
 
 // Try making me lower to see how performance degrades
-const STEP = 10;
+const STEP = 40;
 
 const particleOptions: ParticleOptions = {
   filter: ({ x, y, image }) => {
@@ -61,9 +61,9 @@ const ParticleImg = props => {
         src={CiwaLogo}
         width={Number(innerWidth)}
         height={Number(innerHeight/2.5)}
-        scale={1.5}
+        scale={1.4}
         entropy={5}
-        maxParticles={6000}
+        maxParticles={4000}
         particleOptions={particleOptions}
         mouseMoveForce={motionForce}
         touchMoveForce={motionForce}
