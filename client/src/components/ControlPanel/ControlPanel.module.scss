@@ -32,11 +32,11 @@
     color: #fff;
     // margin-left: auto;
 
-    &>*{
-        &:not(:last-child){
-            // margin-right: 1rem;
-        }
-    }
+    // &>*{
+    //     &:not(:last-child){
+    //         // margin-right: 1rem;
+    //     }
+    // }
 }
 
 
@@ -47,6 +47,7 @@
     align-items: flex-start;
     flex-wrap: nowrap;
     padding: 5rem 0;
+    padding-bottom: 2rem;
     // background-color: rgba(0, 0, 0, 0.027);
     border-top: 1px solid rgba(0, 0, 0, 0.102);
     // border-bottom: 1px solid rgba(0, 0, 0, 0.102);
@@ -60,10 +61,10 @@
 }
 .Container{
     text-align: center;
-    width: 100rem;
-    flex-shrink: 2;
-    padding: 3rem 5rem;
-    min-width: 50rem;
+    width: 80rem;
+    flex-shrink: 1;
+    padding: 3rem 2rem;
+    min-width: 40rem;
 }
 
 .Header{
@@ -82,15 +83,15 @@
 }
 
 .Prediction{
-    padding: 3rem 5rem;
+    padding: 3rem 2rem;
     width: 100rem;
     flex-shrink: 1;
-    min-width: 56rem;
+    min-width: 40rem;
 }
 
 .TableWrapper{
-    padding: 3rem 5rem;
-    width: 100rem;
+    padding: 3rem 2rem;
+    width: 90rem;
     flex-shrink: 3;
 }
 
@@ -115,12 +116,6 @@
     text-align: center;
     font-size: 1rem;
 }
-.Analytics{
-    padding: 5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.102);
-    background-color: rgba(22, 22, 22, 0.075);
-
-}
 
 .ModalText{
     // position: absolute;
@@ -136,6 +131,54 @@
     padding-bottom: 1rem;
 }
 
+.Analytics{
+    text-align: center;
+    padding: 0 5rem;
+    // border-top: 1px solid rgba(0, 0, 0, 0.102);
+    // background-image: linear-gradient(to bottom, #fff, rgba(0, 247, 255, 0.356), #fff);
+}
+
+.MeanLeafTempWrapper{
+    position: relative;
+    padding: 5rem  2rem 5rem 2rem;
+    height: 100%;
+    margin: 0 auto;
+    display: inline-block;
+    filter: blur(100%);
+    background-color: rgb(255, 255, 255);
+    // border-radius: 100rem;
+
+    & span{
+        color: darken(#ffc800, 10%) ;
+        font-size: 3rem;
+        position: absolute;
+        top: 48%;
+        left: 49%;
+        transform: translate(-50%,-50%);
+    }
+}
+.MeanLeafTempIcon{
+    animation: rotateClockwise 50s linear infinite ;
+}
+
+.MeanLeafTempParagraph{
+    color: #181818;
+    font-size: 2.6rem;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    
+}
+
+.MeanLeafTemp{
+    color: darken(#ffc800, 10%) ;
+    font-size: 4.5rem;
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+
 @media only screen and (max-width: 1490px) {
     .ImgNmeta{
         flex-wrap: wrap;
@@ -150,7 +193,9 @@
     }
 
     .Prediction{
-        width: 80rem;
+        width: 90rem;
+        padding: 1rem 3rem;
+        padding-left: 5rem;
     }
 
     .Container{
@@ -166,17 +211,23 @@
 
     .Container{
         flex-grow: 1;
-        padding: 1rem 2.5rem;
+        padding: 1rem 1.5rem;
     }
  
     .Prediction{
         flex-grow: 1;
-        padding: 1rem 2.5rem;
+        padding: 1rem 4rem;
+        padding-left: 1.5rem;
     }
 
     .TableWrapper{
         flex-grow: 1;
-        padding: 1rem 2.5rem;
+        padding: 1rem 1.5rem;
     }
 }
 
+@keyframes rotateClockwise {
+    0% {transform:  rotate(0);}
+    50% {transform: rotate(180deg);}
+    100% {transform: rotate(360deg);}
+}

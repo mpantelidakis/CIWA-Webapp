@@ -4,19 +4,20 @@ import ReactCompareImage from 'react-compare-image';
 // import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/src/styles/styles.scss";
 
+
 import NotFound from '../NotFound/NotFound'
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 
 import {Spinner} from 'react-spinners-css';
 
-import {  base, Trash, Download, Technology, Next, Action, Configure, Services } from 'grommet-icons';
+import { ThemeProvider }  from 'styled-components';
+import {  base, Trash, Download, Technology, Solaris, Action, Configure, Services } from 'grommet-icons';
+import { deepMerge } from "grommet-icons/utils";
 
 import Table from '../Table/Table'
 
 import Button from '../UI/Button/Button'
-
-// import styles from 'react-awesome-button/src/styles/themes/theme-red';
 
 import ImageWithOverlay from '../UI/ImageWithOverlay/ImageWithOverlay'
 import classes from './ControlPanel.module.scss'
@@ -27,6 +28,27 @@ import ParticleImg from '../ParticleImg/ParticleImg'
 
 import Modal from '../UI/Modal/Modal'
 
+
+const sunTheme = deepMerge(base, {
+    global: {
+      colors: {
+        primary: '#ffad33',
+        secondary: '#ffb84d',
+        tertiary: '#39e600',
+        fourth: '#ffc800'
+      },
+    },
+    icon: {
+        size: {
+            small: '12px',
+            medium: '24px',
+            large: '48px',
+            xlarge: '96px',
+            xxlarge: '270px'
+        }
+    }
+  });
+ 
 
 const ControlPanel = props => {
 
@@ -245,9 +267,18 @@ const ControlPanel = props => {
                         
                       
                     </section>
+                    {meanLeafTemp ?
                     <section className={classes.Analytics}>
-                        {meanLeafTemp ? <p classname={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature: <span className={classes.MeanLeafTempSpan}>{meanLeafTemp}</span></p> : null}
+                        <div className={classes.MeanLeafTempWrapper}>
+                            <p className={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature</p>
+                            <ThemeProvider theme={sunTheme}>
+                                <Solaris className={classes.MeanLeafTempIcon} size="xxlarge" color="fourth"  /> 
+                            </ThemeProvider>
+                            <p className={classes.MeanLeafTemp}>{meanLeafTemp.toFixed(2)}</p>
+                            <span>&#8451;</span>
+                        </div>
                     </section>
+                    : null}
                     
                     <Modal show={predActive}> <p className={classes.ModalText}>Detecting sunlit leaves. Please wait...</p>
                     {predActive ? <ParticleImg img={VisualPreviewUrl}/> : null}</Modal>

@@ -61,7 +61,7 @@ const ParticleImg = props => {
         src={CiwaLogo}
         width={Number(innerWidth)}
         height={Number(innerHeight/2.5)}
-        scale={1.4}
+        scale={1}
         entropy={5}
         maxParticles={4000}
         particleOptions={particleOptions}
