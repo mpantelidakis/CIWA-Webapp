@@ -12,7 +12,7 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 import {Spinner} from 'react-spinners-css';
 
 import { ThemeProvider }  from 'styled-components';
-import {  base, Trash, Download, Technology, Solaris, Action, Configure, Services } from 'grommet-icons';
+import {  base, Trash, Download, Technology, Solaris, Cloudlinux, Debian, Services } from 'grommet-icons';
 import { deepMerge } from "grommet-icons/utils";
 
 import Table from '../Table/Table'
@@ -35,7 +35,8 @@ const sunTheme = deepMerge(base, {
         primary: '#ffad33',
         secondary: '#ffb84d',
         tertiary: '#39e600',
-        fourth: '#ffc800'
+        fourth: '#ffc800',
+        blue: '#00a2ff'
       },
     },
     icon: {
@@ -44,7 +45,7 @@ const sunTheme = deepMerge(base, {
             medium: '24px',
             large: '48px',
             xlarge: '96px',
-            xxlarge: '270px'
+            xxlarge: '220px'
         }
     }
   });
@@ -67,6 +68,8 @@ const ControlPanel = props => {
     const [maxTemp, setMaxTemp] = useState(0)
 
     const [meanLeafTemp, setMeanLeafTemp] = useState(null)
+
+    const [CWSI, setCWSI] = useState(null)
 
     const [predActive, setpredActive] = useState(false)
 
@@ -146,6 +149,8 @@ const ControlPanel = props => {
                         setMaxTemp(res.data['max_temp'])
                         setMeanLeafTemp(res.data['mean_sunlit_temp'])
                         setHasMask(res.data['has_mask'])
+                        if(res.data['CWSI'])
+                            setCWSI(res.data['CWSI'])
 
                         
                     })
@@ -189,6 +194,7 @@ const ControlPanel = props => {
             setMeanLeafTemp(res.data['mean_sunlit_temp'])
             setpredActive(false)
             setHasMask(true)
+            setCWSI(res.data['CWSI'])
         })
         .catch(error => {
             //The interceptor of the hoc handles the exception
@@ -267,7 +273,7 @@ const ControlPanel = props => {
                         
                       
                     </section>
-                    {meanLeafTemp ?
+                    {meanLeafTemp && CWSI ?
                     <section className={classes.Analytics}>
                         <div className={classes.MeanLeafTempWrapper}>
                             <p className={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature</p>
@@ -276,6 +282,14 @@ const ControlPanel = props => {
                             </ThemeProvider>
                             <p className={classes.MeanLeafTemp}>{meanLeafTemp.toFixed(2)}</p>
                             <span>&#8451;</span>
+                        </div>
+                        <div className={classes.MeanLeafTempWrapper}>
+                            <p className={classes.MeanLeafTempParagraph}>Crop Water Stress Index</p>
+                            <ThemeProvider theme={sunTheme}>
+                                <Debian className={classes.CWSIcon} size="xxlarge" color="blue"  /> 
+                            </ThemeProvider>
+                            <p className={classes.CWSI}>{CWSI.toFixed(3)}</p>
+                            {/* <span>&#8451;</span> */}
                         </div>
                     </section>
                     : null}

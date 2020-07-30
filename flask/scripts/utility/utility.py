@@ -5,6 +5,7 @@ import numpy.ma as ma
 # np.set_printoptions(threshold=np.inf)
 import json
 from PIL import Image
+import math
 
 
 def image_downscale(img_np, width, height):
@@ -126,3 +127,49 @@ class NumpyEncoder(json.JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
+
+def calculateCWSI(Ta,Tc,RH):
+    Slope = -1.33
+    Intercept = 2.44
+
+    # Ta = 30
+    # Tc = 29
+    # RH = 0.35
+
+    # Saturation Vapor Pressure at Ta
+    VPsat = 0.6108 * math.exp(17.27 * Ta / (Ta + 237.3))
+
+    # Actual Vapor Pressure
+    VPair = VPsat * RH/100
+
+    # Vapor Pressure Deficit
+    VPD = VPsat - VPair
+
+    # VPsat (Ta + Intercept)
+    VPsat_Ta_plus_Intercept = 0.6108 * math.exp(17.27 * (Ta + Intercept) / (Ta + Intercept + 237.3))
+
+    # Vapor Pressure Gradient
+    VPG = VPsat - VPsat_Ta_plus_Intercept
+
+    # Temperature difference lower limit
+    T_ll = Intercept + Slope * VPD
+
+    # Temperature difference upper limit
+    T_ul = Intercept + Slope * VPG
+
+    # Crop Water Stress Index
+    CWSI = ((Tc - Ta) - T_ll) / (T_ul - T_ll)
+
+    print("Ta",Ta)
+    print("Tc",Tc)
+    print("RH",RH)
+    print("VPSat: ", VPsat)
+    print("VPair: ", VPair)
+    print("VPD: ", VPD)
+    print("VPsat_Ta_plus_Intercept: ",VPsat_Ta_plus_Intercept)
+    print("VPG: ", VPG)
+    print("T_ll: ", T_ll)
+    print("T_ul: ", T_ul)
+    print("CWSI: ", CWSI)
+
+    return CWSI

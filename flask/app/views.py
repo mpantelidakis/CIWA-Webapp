@@ -19,7 +19,7 @@ import pprint
 
 from bson.binary import Binary
 import pickle
-from scripts.utility.utility import NumpyEncoder, crop_mask_and_overlay_temps
+from scripts.utility.utility import NumpyEncoder, crop_mask_and_overlay_temps, calculateCWSI
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
@@ -310,25 +310,28 @@ class Predict(Resource):
 				# print("Mask file path: ", mask_path)
 				# print("Crop width: ", crop_w)
 				# print("Crop height: ", crop_h)
-				mean_sunlit_temp, leaves_np = crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at, 5, 5)
+				mean_sunlit_temp, leaves_np = crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at, 7, 7)
+
+				CWSI = calculateCWSI(Ta=files['metadata']['AtmosphericTemperature'], Tc=mean_sunlit_temp, RH=files['metadata']['RelativeHumidity'])
 
 				# convert the numpy array of temperatures to binary so it can be stored in the mongodb
 				leaf_temps = Binary(pickle.dumps(leaves_np, protocol=2), subtype=128 )
 
-				dbfiles.update_one({"file_name": filename}, {"$set": {"has_mask": has_mask , "mean_sunlit_temp": mean_sunlit_temp, "leaf_temps": leaf_temps}})
+				dbfiles.update_one({"file_name": filename}, {"$set": {"has_mask": has_mask , "mean_sunlit_temp": mean_sunlit_temp, "leaf_temps": leaf_temps, "CWSI": CWSI}})
 
 				resp = {
 					'leaf_temps': json.dumps(leaves_np, cls=NumpyEncoder),
 					'mean_sunlit_temp' : mean_sunlit_temp,
+					'CWSI' : CWSI,
 					'msg' :  "Ran the file through the FRRN model. Found sunlit leaves mean temperature."
 				}
 				resp = jsonify(resp)
-			else:
-				resp = jsonify({"msg":"Mask already generated."})
-			
-			
-			resp.status_code = 200
-			return resp
+				# else:
+				# 	resp = jsonify({"msg":"Mask already generated."})
+				
+				
+				resp.status_code = 200
+				return resp
 
 		resp = jsonify({"error":"Error 404, image not found"})
 		resp.status_code = 404
