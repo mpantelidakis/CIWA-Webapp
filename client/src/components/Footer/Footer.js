@@ -8,8 +8,7 @@ const Footer = () => {
     return(
         <section className={classes.Footer}>
             <div className={classes.Group_createdBy_name}>
-                <p>Created by</p>
-                <p className={classes.Self}>Minas Pantelidakis</p>
+                <p>&copy; 2020 by <span className={classes.Self}>Minas Pantelidakis</span>. All rights reserved.</p>
             </div>
             
             <div className={classes.Icons}>

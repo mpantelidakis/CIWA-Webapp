@@ -1,0 +1,81 @@
+.SectionHome{
+    margin-top: -56px;
+    background: url('../../assets/images/home.jpg');
+    display: block;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    // clip-path: polygon(0% 0%, 0% 100%, 65% 100%, 100% 90%, 100% 66%, 100% 0);
+    
+
+}
+
+.Details{
+    display: block;
+    min-width: 40rem;
+    min-height: 40rem;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+    // padding: 5rem 0rem;
+    // min-width: 50%;
+    // padding-top: 13rem;
+    padding-left:0;
+    // line-height: 2;
+    clip-path: polygon(7% 4%, 0 100%, 23% 100%, 0 24%, 100% 34%, 82% 71%, 8% 86%, 15% 100%, 92% 100%, 100% 0);
+    animation: fadeIn .5s ease-in;
+
+
+
+
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    .Details {
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(5px);
+      background-color: rgba(2, 27, 10, 0.603);  
+    }
+}
+
+.WelcomeText{
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: lighter;
+    font-size: 3rem;
+    color: white;
+
+    &__Title{
+        font-size: 4.8rem;
+        letter-spacing: 1.72rem;
+    }
+
+    &__TitleSecondary{
+        margin-top: 0rem;
+        font-size: 2.1rem;
+        letter-spacing: .2rem;
+        margin-bottom: 24rem;
+    }
+
+    &__DevelopedBy{
+        font-size: 1.4rem;
+    }
+
+    &__Name{
+        font-size: 1.8rem;
+    }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0;}
+    100% {opacity: 1;}
+}

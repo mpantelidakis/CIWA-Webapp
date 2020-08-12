@@ -22,7 +22,7 @@ from PIL import Image
 
 class Predictor:
 
-    def __init__(self, checkpoint_path="ML/checkpoints/latest_model_FRRN-A_CIWA.ckpt", 
+    def __init__(self, checkpoint_path="ML/checkpoints/model.ckpt", 
                 is_debug=True, crop_height=480, crop_width=640, model="FRRN-A", image=""):
 
         self.checkpoint_path = checkpoint_path

@@ -1,5 +1,5 @@
 import React from 'react'
-import ciwaLogo from '../../assets/images/ciwa-logo.png'
+import ciwaLogo from '../../assets/images/CIWA_LOGO.png'
 import classes from './Logo.module.scss'
 
 const logo = (props) => (
