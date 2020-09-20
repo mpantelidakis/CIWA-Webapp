@@ -1,0 +1,64 @@
+.Footer{
+    padding: 0 5rem;
+    padding-right: 0;
+    background-color: #191D1F;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Group_createdBy_name{
+    padding: 1rem 0;
+    letter-spacing: .1rem;
+}
+
+.Self{
+    color: #0e955b;
+    font-size: 1rem;
+}
+
+
+.Icons{
+    padding: 0 3rem;
+    padding-left: 4rem;
+    align-self: stretch;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    // border-bottom-right-radius: 50rem;
+    border-bottom-left-radius: 50rem;
+}
+
+
+.Link:link,
+.Link:visited{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+
+    transition: all .2s;
+
+    
+        &:not(:last-of-type){
+            margin-right: 1rem;
+        }
+    
+}
+
+.Link:hover,
+.Link:active{
+
+   transform: rotate(30deg)
+   
+}
+
+
+@media only screen and (max-width: 500px) {
+    .Footer{
+        padding: 0 2rem;
+        padding-right: 0;
+    }
+}
+

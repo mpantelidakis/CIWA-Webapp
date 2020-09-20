@@ -7,6 +7,7 @@ import Layout from './containers/Layout/Layout'
 import ImageUploader from "./components/ImageUploader/ImageUploader";
 
 import asyncComponent from './hoc/asyncComponent/asyncComponent'
+import Home from './components/Home/Home'
 
 
 const asyncImageList = asyncComponent(() => {
@@ -26,27 +27,10 @@ function App() {
       <Route path="/upload" component={() => <ImageUploader withPreview/>} />
       <Route path="/images/:imageName" component={asyncControlPanel}/>
       <Route path="/images" component={asyncImageList}/>
+      <Route path="/" exact component={Home} />
       <Redirect to="/"/>
     </Switch>
   )
-
-  // const fetchData = async () => {
-    
-  //       axios.get('http://localhost:5000/api/files', {
-          
-  //       })
-  //       .then(function (response) {
-  //         console.log(response);
-  //         setFiles(response.data)
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       })
-  //       .then(function () {
-  //         // always executed
-  //       });  
-  // }
-
   return (
     <div>
       <Layout>

@@ -1,5 +1,5 @@
-import React, {Component, Fragment} from 'react'
-import Modal from '../../components/UI/Modal/Modal'
+import React, {Component} from 'react'
+// import Modal from '../../components/UI/Modal/Modal'
 
 import { toast } from 'react-toastify';
 import '../../components/UI/toastify.modules.scss'

@@ -1,0 +1,39 @@
+
+.Title{
+    text-align: center;
+    font-size: 2rem;
+    color: #0fa35e;
+    margin-bottom: 1rem;
+}
+
+.Table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .Table td{
+    border: 1px solid #ddd;
+    padding: .5rem;
+    text-align: left;
+    font-size: 1.4rem;
+    letter-spacing: .1rem;
+    font-weight: 100;
+  }
+  
+  .Table tr:nth-child(even){background-color: #f3f0f0;}
+  .Table tr:nth-child(odd){background-color: #fff}
+  
+  .Table tr:hover {background-color: #ddd; color: black;}
+
+  .Table th {
+    background: rgba(14,149,91,1);
+    padding: .5rem .2rem;
+    text-align: center;
+    font-size: 1.3rem;
+    letter-spacing: .1rem;
+    color: #fff;
+    font-weight: 400;
+    border: 1px solid #bbbb;
+    border-bottom: 4px solid white;
+  }

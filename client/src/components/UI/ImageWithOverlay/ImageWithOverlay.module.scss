@@ -1,0 +1,24 @@
+.ImageWithOverlay{
+    display: flex; /* required */
+    flex-flow: row nowrap; /* required */
+}
+
+.Bg,
+.Leaves {
+    width: 94%; /* required */
+    flex: none; /* required */
+}
+
+.Leaves{
+    margin-left: -94%; /* required */
+}
+
+.Slider{
+    width: 5%; /* required */
+    flex: none; /* required */
+    margin-left: 4%; /* required */
+    height: auto !important;
+}
+
+
+

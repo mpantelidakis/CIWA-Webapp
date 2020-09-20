@@ -38,12 +38,13 @@
             padding: 16px 10px;
             border-bottom: 4px solid transparent;
             font-size: 14px;
+            transition: all .2s;
 
             &:hover,
             &:active,
             &.active{
-                background-color:  #0fa35e;
-                border-bottom: 4px solid #45ff24;
+                background-color:  rgba(1, 26, 15, 0.74);
+                border-bottom: 4px solid #0e955b;
                 color: white;
             }
         }

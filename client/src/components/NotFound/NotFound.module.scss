@@ -1,0 +1,18 @@
+.NotFound{
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.SadLeaf{
+    width: 5rem;
+    margin-bottom: 2rem;
+}
+
+.Message{
+    font-size: 2rem;
+    letter-spacing: .2rem;
+    font-weight: 300;
+}

@@ -24,6 +24,8 @@ from itertools import zip_longest
 
 import numpy as np
 
+from scripts.utility.utility import image_downscale, crop_image_only_outside
+
 
 
 class FlirImageExtractor:
@@ -292,10 +294,20 @@ class FlirImageExtractor:
         thermal_np = self.thermal_image_np
 
         # img_visual = Image.fromarray(rgb_np)
+
+        img_visual = Image.fromarray(rgb_np)
+
         
 
-        self.cropped_visual_np = self.crop_center(rgb_np, 504, 342)
+        self.cropped_visual_np = crop_image_only_outside(rgb_np, 30)
+
         cropped_img_visual = Image.fromarray(self.cropped_visual_np)
+
+        widthDiff = img_visual.size[0] - cropped_img_visual.size[0]
+        heightDiff = img_visual.size[1] - cropped_img_visual.size[1]
+
+        if self.is_debug:
+            print("Debug: DIff: {} x {}".format(widthDiff,heightDiff))
 
         thermal_normalized = (thermal_np - np.amin(thermal_np)) / (np.amax(thermal_np) - np.amin(thermal_np))
         img_thermal = Image.fromarray(np.uint8(cm.inferno(thermal_normalized) * 255))
@@ -304,16 +316,29 @@ class FlirImageExtractor:
         
         thermal_image_path = os.path.join(fn_prefix.replace('Flir_Images','Thermal_Images')+'.png')
         visual_image_path = os.path.join(fn_prefix.replace('Flir_Images','Visual_Images')+'.jpg')
+        visual_image_nocrop_path = os.path.join(fn_prefix.replace('Flir_Images','Visual_Images_nocrop')+'.jpg')
 
         # if self.use_thumbnail:
         #     image_filename = fn_prefix + self.thumbnail_suffix
 
         if self.is_debug:
+            print("DEBUG Saving Visual Spectrum nocrop image to:{}".format(visual_image_nocrop_path))
             print("DEBUG Saving Visual Spectrum image to:{}".format(visual_image_path))
             print("DEBUG Saving Thermal image to:{}".format(thermal_image_path))
 
+        img_visual.save(visual_image_nocrop_path)
         cropped_img_visual.save(visual_image_path)
         img_thermal.save(thermal_image_path)
+
+        #Move this to function
+        flat_thermal_np = thermal_np.flatten()
+        minTemp = min(flat_thermal_np)
+        maxTemp = max(flat_thermal_np)
+
+        if self.is_debug:
+            print("Debug: min and max temps : Min {} Max {}".format(minTemp,maxTemp))
+
+        return widthDiff, heightDiff, thermal_np, minTemp, maxTemp
 
     def export_data_to_csv(self):
         """
@@ -325,7 +350,7 @@ class FlirImageExtractor:
         fn_prefix, _ = os.path.splitext(self.flir_img_filename)
         csv_path = os.path.join(fn_prefix.replace('Flir_Images','Csv_Files')+'.csv')
         
-        downscaled_visual_np = self.image_downscale()
+        downscaled_visual_np = image_downscale(self.cropped_visual_np, 80, 60)
         # list of pixel coordinates and thermal values
         coords_and_thermal_values = []
         for e in np.ndenumerate(self.thermal_image_np):
@@ -357,32 +382,8 @@ class FlirImageExtractor:
             writer.writerow(['x', 'y', 'Temp(c)', 'R', 'G', 'B'])
             writer.writerows(formatted_flat_list)
 
-    def crop_center(self, img, cropx, cropy):
-        """
-        Crop the image to the given dimensions
-        :return:
-        """
-        y, x, z = img.shape
-        startx = x // 2 - (cropx // 2)
-        starty = y // 2 - (cropy // 2)
-        return img[starty:starty + cropy, startx:startx + cropx]
 
 
-    def image_downscale(self):
-        """
-        Downscale the rgb image to 60x80 resolution
-        to match the thermal image's resolution
-        and save it
-        :return:
-        """
-        width = 80
-        height = 60
-        dim = (width, height)
-
-        # resize the rgb image
-        resized_visual_np = cv.resize(self.cropped_visual_np, dim, interpolation=cv.INTER_AREA)
-
-        return resized_visual_np
 
     # def create_subfolder(self):
     #     """
