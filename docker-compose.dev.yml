@@ -30,7 +30,7 @@ services:
     volumes:
       - media_volume:/vol/web/media
     ports:
-      - "5000:80"
+      - "5000:81"
     links:
       - flask
       

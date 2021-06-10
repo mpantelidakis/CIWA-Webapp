@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile-flask
     environment:
       # APP_ENV: "prod"
-      APP_DEBUG: "True"
+      APP_DEBUG: "False"
       # APP_PORT: 5000
       MONGODB_DATABASE: flaskdb
       # MONGODB_USERNAME: flaskuser
@@ -16,7 +16,7 @@ services:
       # MONGODB_PASSWORD: pwd
       # MONGODB_HOSTNAME: mongodb
     volumes:
-      - "./flask/:/app"
+      - media_volume:/vol/web/media
     links:
       - mongodb
       
@@ -25,8 +25,10 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile-nginx
+    volumes:
+      - media_volume:/vol/web/media
     ports:
-      - "5000:80"
+      - "5000:81"
     links:
       - flask
       
@@ -55,3 +57,4 @@ services:
       - "80:80"
 volumes:
   mongodbdata:
+  media_volume:
