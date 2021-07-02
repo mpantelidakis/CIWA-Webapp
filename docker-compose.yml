@@ -54,7 +54,7 @@ services:
       dockerfile: Dockerfile-react.prod
     restart: always
     ports:
-      - "80:80"
+      - "8000:80"
 volumes:
   mongodbdata:
   media_volume:
