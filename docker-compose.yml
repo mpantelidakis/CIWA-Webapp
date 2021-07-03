@@ -2,7 +2,7 @@ version: '3'
 
 services:
   flask:
-    image: webapp-flask
+    image: mpantelidakis/webapp-flask
     environment:
       # APP_ENV: "prod"
       APP_DEBUG: "False"
@@ -18,7 +18,7 @@ services:
       - mongodb
       
   nginx:
-    image: webapp-nginx
+    image: mpantelidakis/webapp-nginx
     volumes:
       - media_volume:/vol/web/media
     ports:
@@ -27,7 +27,7 @@ services:
       - flask
       
   mongodb:
-    image: webapp-mongo
+    image: mpantelidakis/webapp-mongo
     restart: always
     environment:
       # MONGO_INITDB_ROOT_USERNAME: usr 
@@ -39,7 +39,7 @@ services:
       - mongodbdata:/data/db
   
   react:
-    image: webapp-react
+    image: mpantelidakis/webapp-react
     restart: always
     ports:
       - "8080:80"
