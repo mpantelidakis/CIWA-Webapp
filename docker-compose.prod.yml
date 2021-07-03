@@ -3,6 +3,9 @@ version: '3'
 services:
   flask:
     image: webapp-flask
+    build:
+      context: ./flask
+      dockerfile: Dockerfile-flask
     environment:
       # APP_ENV: "prod"
       APP_DEBUG: "False"
@@ -19,6 +22,9 @@ services:
       
   nginx:
     image: webapp-nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx
     volumes:
       - media_volume:/vol/web/media
     ports:
@@ -28,6 +34,9 @@ services:
       
   mongodb:
     image: webapp-mongo
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile-mongo
     restart: always
     environment:
       # MONGO_INITDB_ROOT_USERNAME: usr 
@@ -40,6 +49,9 @@ services:
   
   react:
     image: webapp-react
+    build:
+      context: ./client
+      dockerfile: Dockerfile-react.prod
     restart: always
     ports:
       - "8080:80"
