@@ -6,7 +6,7 @@ services:
     image: webapp-flask
     build:
       context: ./flask
-      dockerfile: Dockerfile-flask
+      dockerfile: Dockerfile
     environment:
       # APP_ENV: "prod"
       APP_DEBUG: "True"
@@ -26,7 +26,7 @@ services:
     image: webapp-nginx
     build:
       context: ./nginx
-      dockerfile: Dockerfile-nginx
+      dockerfile: Dockerfile
     volumes:
       - media_volume:/vol/web/media
     ports:
@@ -38,7 +38,7 @@ services:
     image: webapp-mongo
     build:
       context: ./mongodb
-      dockerfile: Dockerfile-mongo
+      dockerfile: Dockerfile
     restart: always
     environment:
       # MONGO_INITDB_ROOT_USERNAME: usr 
@@ -58,7 +58,7 @@ services:
       - './client:/usr/src/app'
       - '/usr/src/app/node_modules'
     ports:
-      - '3000:3000'
+      - "8080:80"
     links:
       - "flask"
     stdin_open: true

@@ -1,4 +1,5 @@
 from app import app
+import os
 
 if __name__ == '__main__':
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)

@@ -129,8 +129,8 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 def calculateCWSI(Ta,Tc,RH):
-    Slope = -1.33
-    Intercept = 2.44
+    Slope = -1.49
+    Intercept = 3.09
 
     # Ta = 30
     # Tc = 29
