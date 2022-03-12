@@ -41,20 +41,8 @@
     // padding-top: 13rem;
     padding-left:0;
     // line-height: 2;
-    clip-path: polygon(7% 4%, 0 100%, 23% 100%, 0 24%, 100% 34%, 82% 71%, 8% 86%, 15% 100%, 92% 100%, 100% 0);
+    clip-path: polygon(-5% -13%, 73% -6%, 92% 29%, -2% 21%, -3% 59%, 99% 56%, 104% 91%, -6% 118%, 0% 43%);
     animation: fadeIn .5s ease-in;
-
-
-
-
-}
-
-@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-    .Details {
-      -webkit-backdrop-filter: blur(2px);
-      backdrop-filter: blur(5px);
-      background-color: rgba(2, 27, 10, 0.603);  
-    }
 }
 
 .WelcomeText{
@@ -75,7 +63,7 @@
         margin-top: 0rem;
         font-size: 2.1rem;
         letter-spacing: .2rem;
-        margin-bottom: 24rem;
+        margin-bottom: 20rem;
         opacity: 0;
     }
 
@@ -83,12 +71,40 @@
         font-size: 1.4rem;
     }
 
-    &__Name{
+    &__TheRealOG{
         font-size: 1.8rem;
     }
+
+    &__SupportedBy{
+        padding-top: 2rem;
+        font-size: 1.2rem;
+    }
+}
+
+.SupportedByContainer{
+    height: 6rem;
+    display: flex;
+    min-width: inherit;
+    justify-content: space-around;
+    margin: 2rem 0;
+    background-color: #fff;
+    padding: 0.5rem;
 }
 
 @keyframes fadeIn {
     0% { opacity: 0;}
     100% {opacity: 1;}
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    .Details {
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(5px);
+      background-color: rgba(2, 27, 10, 0.603);  
+    }
+    .SupportedBy{
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(5px);
+        background-color: rgba(2, 27, 10, 0.603);  
+    }
 }

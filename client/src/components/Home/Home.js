@@ -1,6 +1,9 @@
 import React from 'react'
 import classes from './Home.module.scss'
 import Logo from '../Logo/Logo'
+import Aulogo from '../AULogo/AULogo'
+import Citlogo from '../FresnoLogo/FresnoLogo'
+import Tuclogo from '../TucLogo/TucLogo'
 
 const Home = () =>{
     return (
@@ -15,11 +18,18 @@ const Home = () =>{
                 <p className={`${classes.WelcomeText} ${classes.WelcomeText__DevelopedBy}`}>
                     developed by
                 </p>
-                <p className={`${classes.WelcomeText} ${classes.WelcomeText__Name}`}>
+                <p className={`${classes.WelcomeText} ${classes.WelcomeText__TheRealOG}`}>
                     Minas Pantelidakis
                 </p>
+                <p className={`${classes.WelcomeText} ${classes.WelcomeText__SupportedBy}`}>
+                    supported by
+                </p>
+                <p className={classes.SupportedByContainer}>
+                    <Tuclogo/> 
+                    <Citlogo/>
+                    <Aulogo/> 
+            </p>
             </div>
-       
             
         </section>
     )

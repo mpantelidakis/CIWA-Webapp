@@ -1,7 +1,7 @@
  # base image
 FROM node:9.6.1
 
-EXPOSE 80
+EXPOSE 3000
 
 # set working directory
 RUN mkdir /usr/src/app
