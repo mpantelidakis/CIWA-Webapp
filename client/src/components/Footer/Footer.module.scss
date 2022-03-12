@@ -1,4 +1,5 @@
 .Footer{
+    height:3rem;
     padding: 0 5rem;
     padding-right: 0;
     background-color: #191D1F;
@@ -20,12 +21,14 @@
 
 
 .Icons{
-    padding: 0 3rem;
-    padding-left: 4rem;
+    width: 25rem;
+    padding: .2rem 3rem;
+    padding-left: 5rem;
     align-self: stretch;
     background-color: #fff;
     display: flex;
     align-items: center;
+    justify-content: space-around;
     // border-bottom-right-radius: 50rem;
     border-bottom-left-radius: 50rem;
 }

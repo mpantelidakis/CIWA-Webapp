@@ -5,6 +5,7 @@ import './App.scss';
 
 import Layout from './containers/Layout/Layout'
 import ImageUploader from "./components/ImageUploader/ImageUploader";
+import About from "./components/About/About";
 
 import asyncComponent from './hoc/asyncComponent/asyncComponent'
 import Home from './components/Home/Home'
@@ -27,6 +28,7 @@ function App() {
       <Route path="/upload" component={() => <ImageUploader withPreview/>} />
       <Route path="/images/:imageName" component={asyncControlPanel}/>
       <Route path="/images" component={asyncImageList}/>
+      <Route path="/about" component={About}/>
       <Route path="/" exact component={Home} />
       <Redirect to="/"/>
     </Switch>
