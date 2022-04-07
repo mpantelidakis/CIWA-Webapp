@@ -302,127 +302,133 @@ const ImageUploader = props => {
 
     return (
         <Fragment>
-           
-        <div className={classes.ImageUploader}>
-            {file ? 
-            <Fragment>
-            <div className={classes.Message}>
-                <p><strong>Will be uploaded: </strong>{file.name}</p>
-                <p><strong>File size: </strong>{(file.size/(1024)).toFixed(2)} KBs</p>
-            </div>
-            </Fragment>: 
-            <p className={classes.Message}>Please select a FLIR AX8 image to upload</p>}
-            <ImagePreview Url={filePreviewUrl}/>
-
+        <div className={classes.SectionImageUploader}>
             
+        
+           
+            <div className={classes.ImageUploader}>
+                {file ? 
+                <Fragment>
+                <div className={classes.Message}>
+                    <p><strong>Will be uploaded: </strong>{file.name}</p>
+                    <p><strong>File size: </strong>{(file.size/(1024)).toFixed(2)} KBs</p>
+                </div>
+                </Fragment>: 
+                <p className={classes.Message}>Please upload a FLIR AX8 image <br/>
+                (to test the tool use <a href="https://223886be-4720-4a40-bee2-98c5f71fc084.filesusr.com/archives/e2f6fc_c8e60b3415394b7485390c6dfa405cb3.zip?dn=FLIR%20AX8%20sample%20image.zip"> sample image 1</a>
+                or <a href="https://223886be-4720-4a40-bee2-98c5f71fc084.filesusr.com/archives/e2f6fc_9dcf9b06291540c1a5f9538f84c6f05a.zip?dn=FLIR%20AX8%20sample%20image%20II.zip"> sample image 2</a>)</p>}
+                <ImagePreview Url={filePreviewUrl}/>
 
-            <input style={{display: 'none'}}
-            type="file" 
-            onChange={fileSelectedHandler}
-            ref={inputEl}/>
-            <div className={classes.Buttons}>
-                {/* {file ? <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select another image</button> : 
-                <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select an image</button>} */}
-                {file ? <AwesomeButton
-                        // cssModule={btnClass}
-                        type="secondary"
-                        ripple
-                        size="large"
-                        onPress={() => inputEl.current.click()}
-                        >
-                        Select another image
-                </AwesomeButton>:
-                <AwesomeButton
-                        // cssModule={btnClass}
-                        type="secondary"
-                        ripple
-                        size="large"
-                        onPress={() => inputEl.current.click()}
-                        >
-                        Select an image
-                </AwesomeButton>}
-                {/* <button className={classbtnUpload} disabled={!isDisabled()} onClick={checkMetadataHandler}>Extract metadata</button> */}
-                <AwesomeButton
-                        // cssModule={btnClass}
-                        type="primary"
-                        ripple
-                        size="large"
-                        disabled={!isDisabled()}
-                        onPress={checkMetadataHandler}
-                        >
-                        Extract metadata
-                </AwesomeButton>
                 
-            </div>
-        </div>
-        {imageMetadata ?  
-            <div className={classes.MetadataPanel} id="#metaPanel">
-                <h3 className={classes.MetadataPanel__title}>Are these values correct?</h3>
-                <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span className={classes.metaSpan}>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
-                <p className={classes.MetadataPanel__element}>Emissivity : <span className={classes.metaSpan}>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
-                {/* <p>IR Window Temperature: </span>{imageMetadata.IRWindowTemperature}</span> (&#8451;)</p>
-                <p className={classes.MetadataPanel__element}>IR Window Transmission: <span>{imageMetadata.IRWindowTransmission}</span></p>
-                <p className={classes.MetadataPanel__element}>Planck B: <span>{imageMetadata.PlanckB}</span></p>
-                <p className={classes.MetadataPanel__element}>Planck F: <span>{imageMetadata.PlanckF}</span></p>
-                <p className={classes.MetadataPanel__element}>Planck O: <span>{imageMetadata.PlanckO}</span></p>
-                <p className={classes.MetadataPanel__element}>Planck R1: <span>{imageMetadata.PlanckR1}</span></p>
-                <p className={classes.MetadataPanel__element}>Planck R2: <span>{imageMetadata.PlanckR2}</p></span> */}
-                <p className={classes.MetadataPanel__element}>Reflected Apparent Temperature: <span className={classes.metaSpan}>{imageMetadata.ReflectedApparentTemperature}</span> (&#8451;)</p>
-                <p className={classes.MetadataPanel__element}>Relative Humidity: <span className={classes.metaSpan}>{imageMetadata.RelativeHumidity}</span> (&#37;)</p>
-                <p className={classes.MetadataPanel__element}>Subject Distance: <span className={classes.metaSpan}>{imageMetadata.SubjectDistance}</span> (m)</p>
-                <div className={classes.Buttons}>
-                    <Link
-                        // activeClass="active"
-                        to="#metaForm"
-                        spy={true}
-                        // hashSpy={true}
-                        smooth={true}
-                        offset={0}
-                        duration={1000}
-                        // isDynamic
 
-                    >  
-                        <AwesomeButton
+                <input style={{display: 'none'}}
+                type="file" 
+                onChange={fileSelectedHandler}
+                ref={inputEl}/>
+                <div className={classes.Buttons}>
+                    {/* {file ? <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select another image</button> : 
+                    <button className={classBtnSelect} onClick={() => inputEl.current.click()}>Select an image</button>} */}
+                    {file ? <AwesomeButton
                             // cssModule={btnClass}
                             type="secondary"
                             ripple
-                            disabled={formOpen}
-                            onPress={toggleFormHandler}
-                            style = {{width: '100%'}}
+                            size="large"
+                            onPress={() => inputEl.current.click()}
                             >
-                            No, let me edit
-                        </AwesomeButton>
-                    </Link>
-                  
-                    {!formOpen ?  <AwesomeButtonProgress
-                        // cssModule={AwesomeButtonStyles}
-                        type="primary"
-                        ripple
-                        onPress={(e, next) => {
-                            
-                            const fd = generateMetaFormData()
-                            axios.post('/api/files', fd, {
-
-                            })
-                            .then(res => {
+                            Select another image
+                    </AwesomeButton>:
+                    <AwesomeButton
+                            // cssModule={btnClass}
+                            type="secondary"
+                            ripple
+                            size="large"
+                            onPress={() => inputEl.current.click()}
+                            >
+                            Select an image
+                    </AwesomeButton>}
+                    {/* <button className={classbtnUpload} disabled={!isDisabled()} onClick={checkMetadataHandler}>Extract metadata</button> */}
+                    <AwesomeButton
+                            // cssModule={btnClass}
+                            type="primary"
+                            ripple
+                            size="large"
+                            disabled={!isDisabled()}
+                            onPress={checkMetadataHandler}
+                            >
+                            Extract metadata
+                    </AwesomeButton>
                     
-                                console.log(res.data.metadata);
-                                setImageMetadata(res.data.metadata);
-                                console.log(res.data.msg);
-                                next();
-                                // props.history.push('/images');
-                                props.history.push('/images/'+ file.name);
-                            })
-                            
-                        }}
-                        >
-                        Yes, upload the image
-                    </AwesomeButtonProgress>: null}
                 </div>
-                
-            </div> 
-        : null}
-        {formOpen ? form : null}
+            </div>
+            {imageMetadata ?  
+                <div className={classes.MetadataPanel} id="#metaPanel">
+                    <h3 className={classes.MetadataPanel__title}>Are these values correct?</h3>
+                    <p className={classes.MetadataPanel__element}>Atmospheric Temperature : <span className={classes.metaSpan}>{imageMetadata.AtmosphericTemperature}</span> (&#8451;)</p>
+                    <p className={classes.MetadataPanel__element}>Emissivity : <span className={classes.metaSpan}>{imageMetadata.Emissivity}</span> (0.00 &mdash; 1.00)</p>
+                    {/* <p>IR Window Temperature: </span>{imageMetadata.IRWindowTemperature}</span> (&#8451;)</p>
+                    <p className={classes.MetadataPanel__element}>IR Window Transmission: <span>{imageMetadata.IRWindowTransmission}</span></p>
+                    <p className={classes.MetadataPanel__element}>Planck B: <span>{imageMetadata.PlanckB}</span></p>
+                    <p className={classes.MetadataPanel__element}>Planck F: <span>{imageMetadata.PlanckF}</span></p>
+                    <p className={classes.MetadataPanel__element}>Planck O: <span>{imageMetadata.PlanckO}</span></p>
+                    <p className={classes.MetadataPanel__element}>Planck R1: <span>{imageMetadata.PlanckR1}</span></p>
+                    <p className={classes.MetadataPanel__element}>Planck R2: <span>{imageMetadata.PlanckR2}</p></span> */}
+                    <p className={classes.MetadataPanel__element}>Reflected Apparent Temperature: <span className={classes.metaSpan}>{imageMetadata.ReflectedApparentTemperature}</span> (&#8451;)</p>
+                    <p className={classes.MetadataPanel__element}>Relative Humidity: <span className={classes.metaSpan}>{imageMetadata.RelativeHumidity}</span> (&#37;)</p>
+                    <p className={classes.MetadataPanel__element}>Subject Distance: <span className={classes.metaSpan}>{imageMetadata.SubjectDistance}</span> (m)</p>
+                    <div className={classes.Buttons}>
+                        <Link
+                            // activeClass="active"
+                            to="#metaForm"
+                            spy={true}
+                            // hashSpy={true}
+                            smooth={true}
+                            offset={0}
+                            duration={1000}
+                            // isDynamic
+
+                        >  
+                            <AwesomeButton
+                                // cssModule={btnClass}
+                                type="secondary"
+                                ripple
+                                disabled={formOpen}
+                                onPress={toggleFormHandler}
+                                style = {{width: '100%'}}
+                                >
+                                No, let me edit
+                            </AwesomeButton>
+                        </Link>
+                    
+                        {!formOpen ?  <AwesomeButtonProgress
+                            // cssModule={AwesomeButtonStyles}
+                            type="primary"
+                            ripple
+                            onPress={(e, next) => {
+                                
+                                const fd = generateMetaFormData()
+                                axios.post('/api/files', fd, {
+
+                                })
+                                .then(res => {
+                        
+                                    console.log(res.data.metadata);
+                                    setImageMetadata(res.data.metadata);
+                                    console.log(res.data.msg);
+                                    next();
+                                    // props.history.push('/images');
+                                    props.history.push('/images/'+ file.name);
+                                })
+                                
+                            }}
+                            >
+                            Yes, upload the image
+                        </AwesomeButtonProgress>: null}
+                    </div>
+                    
+                </div> 
+            : null}
+            {formOpen ? form : null}
+        </div>
         </Fragment>
     )
 }
