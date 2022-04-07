@@ -315,7 +315,7 @@ const ImageUploader = props => {
                 </div>
                 </Fragment>: 
                 <p className={classes.Message}>Please upload a FLIR AX8 image <br/>
-                (to test the tool use <a href="https://223886be-4720-4a40-bee2-98c5f71fc084.filesusr.com/archives/e2f6fc_c8e60b3415394b7485390c6dfa405cb3.zip?dn=FLIR%20AX8%20sample%20image.zip"> sample image 1</a>
+                (to test the tool you can use <a href="https://223886be-4720-4a40-bee2-98c5f71fc084.filesusr.com/archives/e2f6fc_c8e60b3415394b7485390c6dfa405cb3.zip?dn=FLIR%20AX8%20sample%20image.zip"> sample image 1</a>
                 or <a href="https://223886be-4720-4a40-bee2-98c5f71fc084.filesusr.com/archives/e2f6fc_9dcf9b06291540c1a5f9538f84c6f05a.zip?dn=FLIR%20AX8%20sample%20image%20II.zip"> sample image 2</a>)</p>}
                 <ImagePreview Url={filePreviewUrl}/>
 
