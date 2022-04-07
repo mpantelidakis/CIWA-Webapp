@@ -311,7 +311,7 @@ const ImageUploader = props => {
                 <p><strong>File size: </strong>{(file.size/(1024)).toFixed(2)} KBs</p>
             </div>
             </Fragment>: 
-            <p className={classes.Message}>Please select an image to upload</p>}
+            <p className={classes.Message}>Please select a FLIR AX8 image to upload</p>}
             <ImagePreview Url={filePreviewUrl}/>
 
             
@@ -411,6 +411,7 @@ const ImageUploader = props => {
                                 console.log(res.data.msg);
                                 next();
                                 // props.history.push('/images');
+                                props.history.push('/images/'+ file.name);
                             })
                             
                         }}

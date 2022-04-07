@@ -65,3 +65,11 @@
     }
 }
 
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    .Footer {
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(5px);
+      background-color: rgba(1, 14, 5, 0.877);  
+    }
+}

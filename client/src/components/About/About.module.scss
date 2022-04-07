@@ -19,7 +19,7 @@
     min-width: 55rem;
     // min-height: 40rem;
     text-align: center;
-    background-color: rgba(218, 218, 218, 0.932);
+    background-color: #191D1F;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -35,7 +35,16 @@
     animation: fadeIn .5s ease-in;
 
     &__Abstract{
+        color: #ffff;
         font-size: 1.3rem;
         text-align: justify;
+    }
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    .Details {
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(5px);
+      background-color: rgba(2, 27, 10, 0.603);  
     }
 }

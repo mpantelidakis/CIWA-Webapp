@@ -29,7 +29,8 @@ function App() {
       <Route path="/images/:imageName" component={asyncControlPanel}/>
       <Route path="/images" component={asyncImageList}/>
       <Route path="/about" component={About}/>
-      <Route path="/" exact component={Home} />
+      <Route path="/" component={() => <ImageUploader withPreview/>} />
+      {/* <Route path="/" exact component={Home} /> */}
       <Redirect to="/"/>
     </Switch>
   )

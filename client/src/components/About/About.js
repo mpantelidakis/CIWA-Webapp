@@ -6,26 +6,28 @@ const About = () =>{
         <section className={classes.SectionAbout}>
             <div className={classes.Details}>
                 <div className={classes.Details__Abstract}>
+                <b>About</b>
+                <br />
+                <br />
+                <p>Precision irrigation is vital for a resource-sustainable agriculture future. Many precision irrigation techniques rely on a measurement 
+                of the crop water stress index (CWSI). CIWA (crop irrigation web-based agent) is an interactive web-based tool that enables the measurement of the 
+                CWSI of pistachio trees with minimum user input. The backbone of CIWA is a convolutional neural network (CNN) model for the semantic segmentation of sunlit-leaf regions 
+                in visible spectrum images. The CWSI measurement also relies on infrared thermography and weather parameters.
+                More details on the CIWA methodology will become available in a corresponding research document in the near future. 
                 
-                <p>Precision irrigation is vital for a resource-sustainable agriculture future. 
-                CIWA (Crop Irrigation Web-based Agent) is an interactive web-based tool that enables measurement of the 
-                Crop water stress index (CWSI) of pistachio trees.
-                It achieves this by utilizing infrared thermography to calculate the mean canopy temperature of sunlit-leaf regions in an image.
-                Sunlit-leaf regions are identified by employing the power of Convolutional Neural Networks (CNNs), and specifically FRRN-A [1].
-                More details on the CIWA methodology can be found in the respective research publication [2]. The CIWA application
-                was designed and developed in the context of a thesis project submitted by Minas Pantelidakis 
-                (under the supervision of Associate Professor Georgios Chalkiadakis)
-                to the Department of Electrical and Computer Engineering, Technical University of Crete, in partial fulfillment of the requirements for 
-                the degree of Master of Engineering (MEng.). The CIWA methodology was deveoped in collaboration with Dr. Shawn Ashkan, Center for Irrigation 
-                Technology, Jordan College of Agriculutal Sciences and Technology, and Assistant Professor Athanasios Aris Panagopoulos, department of Computer 
-                Science, California State University, Fresno. </p>
+                The CIWA tool was designed and developed in the context of a thesis project submitted by Minas Pantelidakis (Ph.D. student, Auburn University, AL, U.S.) 
+                , under the supervision of Associate Professor Georgios Chalkiadakis (Technical University of Crete, Chania, Greece) and Assistant Professor Athanasios Aris Panagopoulos 
+                (California State University Fresno, CA, U.S.), in partial fulfillment of the requirements for the degree of Master of Engineering (MEng.) 
+                to the Department of Electrical and Computer Engineering, Technical University of Crete, Chania, Greece. The CIWA methodology was deveoped in the contex of
+                a collaborative interdisciplinary research endeavor funded by the Agriculture Research Institute (ARI), including Shawn Ashkan (Center for Irrigation Technology, California State University Fresno, CA, U.S.)
+                , Dr. Konstantinos Mykoniatis (Auburn University, AL, U.S.), Rajeswari Cherupillil Eravi (California State University, Fresno, CA, U.S.), 
+                Vishnu Pamula, Enrique Cruz Verduzco III (California State University Fresno, CA, U.S.), Oleksandr Babich (California State University Fresno, CA, U.S.), 
+                , and Orestis Panagopoulos (California State University Stanislaus, CA, U.S.).</p>
                 <br />
                 <p>
                 CIWA is not a commercial product, but publicly available, for free. We envisage that CIWA will be used 
                 by growers and researchers worldwide, for activities ranging from data collection and analysis, to precision irrigation scheduling.
                 </p>
-                
-                {/* To this end, we also provide a web-based application program interface (API), thus enabling the user to fully utlize the tool's capabilities. */}
                 
                 </div>
             </div>
