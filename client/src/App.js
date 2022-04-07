@@ -27,7 +27,7 @@ function App() {
     <Switch>
       <Route path="/upload" component={() => <ImageUploader withPreview/>} />
       <Route path="/images/:imageName" component={asyncControlPanel}/>
-      <Route path="/images" component={asyncImageList}/>
+      {/* <Route path="/images" component={asyncImageList}/> */}
       <Route path="/about" component={About}/>
       <Route path="/" component={() => <ImageUploader withPreview/>} />
       {/* <Route path="/" exact component={Home} /> */}

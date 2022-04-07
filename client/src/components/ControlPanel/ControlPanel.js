@@ -3,9 +3,12 @@ import axios from '../../axios-orders'
 import ReactCompareImage from 'react-compare-image';
 // import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/src/styles/styles.scss";
+import  sunlitImg from '../../assets/images/findSunlitBtn.png'
 
 
 import NotFound from '../NotFound/NotFound'
+
+
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 
@@ -27,7 +30,6 @@ import { Histogram } from '../Visualization/Histogram/Histogram'
 import ParticleImg from '../ParticleImg/ParticleImg'
 
 import Modal from '../UI/Modal/Modal'
-
 
 const sunTheme = deepMerge(base, {
     global: {
@@ -165,7 +167,8 @@ const ControlPanel = props => {
         axios.delete('api/file/' + imageName)
         .then(res => {
             console.log(res.data.msg)
-            props.history.push('/images');
+            props.history.push('/');
+            // props.history.push('/images');
         })
         .catch(error => {
             //The interceptor of the hoc handles the exception
@@ -231,7 +234,9 @@ const ControlPanel = props => {
                         <div className={classes.Buttons}>
                                 <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="medium" /><span>Delete</span></Button>
                                 <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="medium" /><span>Download temperature data</span></Button>
-                                <Button btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" /><span>Find sunlit leaves</span></Button>
+                                <Button btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" />
+                                    <span class={classes.FindSunlitBtn}>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div> 
+                                </Button>
                         </div>
                     </div>
                     
@@ -244,11 +249,12 @@ const ControlPanel = props => {
                             <Histogram series={temperatureArray} min={minTemp} max={maxTemp}/>
                         </div> 
                     : null}
+
                     
                     
                     <section className={classes.ImgNmeta}>
                         <div className={classes.Container}>
-                            <p className={classes.Hint}>Left: Flir image 640x480.<br/>Right: Generated Visual Spectrum Image (without the black surrounding box)<br/>Use the slider in the middle to compare the images.</p>
+                            <p className={classes.Hint}>Left: Flir image 640x480.<br/>Right: Generated Visible Spectrum Image <br/>Use the slider in the middle to compare the images.</p>
                 
                             <div className={classes.Header}>
                                 <p className={classes.ImgName}>{imageName}</p>
@@ -270,9 +276,9 @@ const ControlPanel = props => {
                             <p className={classes.Hint}>Metadata found in the Flir image.</p>
                             <Table data={metadata}>Image metadata</Table>
                         </div> : null}
-                        
-                      
                     </section>
+
+                    
                     {meanLeafTemp && CWSI ?
                     <section className={classes.Analytics}>
                         <div className={classes.MeanLeafTempWrapper}>
@@ -298,7 +304,17 @@ const ControlPanel = props => {
                     {predActive ? <ParticleImg img={VisualPreviewUrl}/> : null}</Modal>
                    
 
-
+                                        
+                    {VisualPreviewUrl && PredictionPreviewUrl ? null :
+                    <section className={classes.FindSunlitSection}>
+                        <div className = {classes.FindSunlitActionItem}>
+                            <Button style="margin: 0 auto;"btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" />
+                                <span>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div> 
+                            </Button> 
+                        </div>
+                    </section>
+                    }
+                   
                    
 
                    

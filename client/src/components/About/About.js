@@ -22,7 +22,7 @@ const About = () =>{
                 a collaborative interdisciplinary research endeavor funded by the Agriculture Research Institute (ARI), including Shawn Ashkan (Center for Irrigation Technology, California State University Fresno, CA, U.S.)
                 , Dr. Konstantinos Mykoniatis (Auburn University, AL, U.S.), Rajeswari Cherupillil Eravi (California State University, Fresno, CA, U.S.), 
                 Vishnu Pamula, Enrique Cruz Verduzco III (California State University Fresno, CA, U.S.), Oleksandr Babich (California State University Fresno, CA, U.S.), 
-                , and Orestis Panagopoulos (California State University Stanislaus, CA, U.S.).</p>
+                and Orestis Panagopoulos (California State University Stanislaus, CA, U.S.).</p>
                 <br />
                 <p>
                 CIWA is not a commercial product, but publicly available, for free. We envisage that CIWA will be used 

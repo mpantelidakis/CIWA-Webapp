@@ -39,6 +39,23 @@
     // }
 }
 
+.FindSunlitActionItem{
+    border: 1px solid black;
+    display:flex;
+    width:17rem;
+    height:6rem;
+    margin-right: 10rem;
+}
+.FindSunlitImg{
+    
+    display: block;
+    width: 2rem;
+    height: 2rem;
+}
+
+.FindSunlitImg img{
+    height: 100%;
+}
 
 .ImgNmeta{
     display: flex;
@@ -198,6 +215,19 @@
     // font-weight: 500;
 }
 
+.FindSunlitSection{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: flex-start;
+    // justify-content: flex-end;
+    flex-wrap: nowrap;
+    padding: 2rem 0;
+    padding-bottom: 2rem;
+    // background-color: rgba(0, 0, 0, 0.027);
+    border-top: 1px solid rgba(0, 0, 0, 0.102);
+
+}
 
 @media only screen and (max-width: 1490px) {
     .ImgNmeta{
