@@ -4,7 +4,9 @@ import classes from './TucLogo.module.scss'
 
 const tuclogo = (props) => (
     <div className={classes.Logo} style={{height: props.height}}>
-        <img src={TucLogo} alt="TucLogo" />
+        <a href="https://www.intelligence.tuc.gr/intelligence/">
+            <img src={TucLogo} alt="TucLogo" />
+        </a>
     </div>
 )
 

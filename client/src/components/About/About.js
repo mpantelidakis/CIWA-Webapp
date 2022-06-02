@@ -14,15 +14,15 @@ const About = () =>{
                 CWSI of pistachio trees with minimum user input. The backbone of CIWA is a convolutional neural network (CNN) model for the semantic segmentation of sunlit-leaf regions 
                 in visible spectrum images. The CWSI measurement also relies on infrared thermography and weather parameters.
                 More details on the CIWA methodology will become available in a corresponding research document in the near future. 
-                
-                The CIWA tool was designed and developed in the context of a thesis project submitted by Minas Pantelidakis (Ph.D. student, Auburn University, AL, U.S.) 
-                , under the supervision of Associate Professor Georgios Chalkiadakis (Technical University of Crete, Chania, Greece) and Assistant Professor Athanasios Aris Panagopoulos 
-                (California State University Fresno, CA, U.S.), in partial fulfillment of the requirements for the degree of Master of Engineering (MEng.) 
-                to the Department of Electrical and Computer Engineering, Technical University of Crete, Chania, Greece. The CIWA methodology was deveoped in the contex of
-                a collaborative interdisciplinary research endeavor funded by the Agriculture Research Institute (ARI), including Shawn Ashkan (Center for Irrigation Technology, California State University Fresno, CA, U.S.)
-                , Dr. Konstantinos Mykoniatis (Auburn University, AL, U.S.), Rajeswari Cherupillil Eravi (California State University, Fresno, CA, U.S.), 
-                Vishnu Pamula, Enrique Cruz Verduzco III (California State University Fresno, CA, U.S.), Oleksandr Babich (California State University Fresno, CA, U.S.), 
-                and Orestis Panagopoulos (California State University Stanislaus, CA, U.S.).</p>
+                The CIWA tool was designed and developed in the context of a thesis project submitted by <a className={classes.AboutLink} href="https://www.linkedin.com/in/minas-pantelidakis-441b5012a/">Minas Pantelidakis</a> (Ph.D. student, Auburn University, AL, U.S.),
+                 under the supervision of Associate Professor <a className={classes.AboutLink} href="https://www.intelligence.tuc.gr/~gehalk/">Georgios Chalkiadakis</a> (Technical University of Crete, Chania, Greece) 
+                and Assistant Professor <a className={classes.AboutLink} href="https://www.apanagopoulos.com/">Athanasios Aris Panagopoulos</a> (California State University Fresno, CA, U.S.), in partial fulfillment of the requirements for the degree of Master of Engineering (MEng.) 
+                to the Department of <a className={classes.AboutLink} href="https://www.ece.tuc.gr/index.php?id=4101">Electrical and Computer Engineering</a>, Technical University of Crete, Chania, Greece. The CIWA methodology was deveoped in the contex of
+                a collaborative interdisciplinary research endeavor funded by the <a className={classes.AboutLink} href="https://www.calstate.edu/impact-of-the-csu/research/ari">Agriculture Research Institute (ARI)</a>,
+                 including Shawn Ashkan (<a className={classes.AboutLink} href="https://www.fresnostate.edu/jcast/cit/">Center for Irrigation Technology</a>, California State University Fresno, CA, U.S.),
+                 Assistant Professor Konstantinos Mykoniatis (Auburn University, AL, U.S.), Rajeswari Cherupillil Eravi (California State University, Fresno, CA, U.S.), 
+                Vishnu Pamula (University of California, Berkeley, CA, U.S.), Enrique Cruz Verduzco III (California State University Fresno, CA, U.S.), Oleksandr Babich (California State University Fresno, CA, U.S.), 
+                and Associate Professor Orestis Panagopoulos (California State University Stanislaus, CA, U.S.).</p>
                 <br />
                 <p>
                 CIWA is not a commercial product, but publicly available, for free. We envisage that CIWA will be used 

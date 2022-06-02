@@ -1,4 +1,5 @@
 import os,time,cv2, sys, math
+
 import tensorflow as tf
 import argparse
 import numpy as np
@@ -36,9 +37,16 @@ class Predictor:
 
     def predictNsave(self):
 
-        class_names_list, label_values = get_label_info("ML/class_dict.csv")
+        # Initializing network
+        tf.reset_default_graph()
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        sess=tf.Session(config=config)
 
+        class_names_list, label_values = get_label_info("ML/class_dict.csv")
         num_classes = len(label_values)
+        net_input = tf.placeholder(tf.float32,shape=[None,None,None,3])
+        net_output = tf.placeholder(tf.float32,shape=[None,None,None,num_classes])
 
         print("\n***** Begin prediction *****")
         # print("Dataset -->", args.dataset)
@@ -48,15 +56,6 @@ class Predictor:
         print("Num Classes -->", num_classes)
         print("Image -->", self.image)
 
-        # Initializing network
-        tf.reset_default_graph()
-        config = tf.ConfigProto()
-        config.gpu_options.allow_growth = True
-        sess=tf.Session(config=config)
-
-        net_input = tf.placeholder(tf.float32,shape=[None,None,None,3])
-        net_output = tf.placeholder(tf.float32,shape=[None,None,None,num_classes]) 
-
         network, _ = model_builder.build_model(self.model, net_input=net_input,
                                                 num_classes=num_classes,
                                                 crop_width=self.crop_width,
@@ -65,10 +64,11 @@ class Predictor:
 
         sess.run(tf.global_variables_initializer())
 
+        
+
         print('Loading model checkpoint weights')
         saver=tf.train.Saver(max_to_keep=1000)
         saver.restore(sess, self.checkpoint_path)
-
 
         print("Testing image " + self.image)
 
@@ -108,5 +108,6 @@ class Predictor:
         print("")
         print("Finished!")
         print("Wrote image " + "%s_pred.png"%(path))
+        print("Time to completion: ", run_time)
 
         return True

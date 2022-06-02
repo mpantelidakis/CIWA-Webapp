@@ -4,7 +4,10 @@ import classes from './FresnoLogo.module.scss'
 
 const citlogo = (props) => (
     <div className={classes.Logo} style={{height: props.height}}>
-        <img src={CIT_logo} alt="CITLogo" />
+         <a href="https://www.fresnostate.edu/jcast/cit/">
+            <img src={CIT_logo} alt="CITLogo" />
+        </a>
+        
     </div>
 )
 

@@ -13,6 +13,14 @@
     
 
 }
+.AboutLink:link,
+.AboutLink:active,
+.AboutLink:visited{
+    color: #fff;
+    font-weight: bold;
+    list-style: none;
+    text-decoration: none;
+}
 
 .Details{
     display: block;
