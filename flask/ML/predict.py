@@ -23,17 +23,21 @@ from PIL import Image
 
 class Predictor:
 
-    def __init__(self, checkpoint_path="ML/checkpoints/model.ckpt", 
-                is_debug=True, crop_height=480, crop_width=640, model="FRRN-A", image=""):
+    def __init__(self,
+                is_debug=True, crop_height=480, crop_width=640,
+                model="FRRN-A", image="", crop_type=""):
 
-        self.checkpoint_path = checkpoint_path
+        print(crop_type)
+        self.crop_type = crop_type
+        if self.crop_type == "Pistachios":
+            self.checkpoint_path = "ML/pistachios/checkpoints/model.ckpt"
+        elif self.crop_type == "Tomatoes":
+            self.checkpoint_path = "ML/tomatoes/checkpoints/model.ckpt"
         self.is_debug = is_debug
         self.crop_width = crop_width
         self.crop_height = crop_height
         self.model = model
         self.image = image
-        
-    pass
 
     def predictNsave(self):
 
@@ -43,7 +47,10 @@ class Predictor:
         config.gpu_options.allow_growth = True
         sess=tf.Session(config=config)
 
-        class_names_list, label_values = get_label_info("ML/class_dict.csv")
+        if self.crop_type == "Pistachios":
+            class_names_list, label_values = get_label_info("ML/pistachios/class_dict.csv")
+        elif self.crop_type == "Tomatoes":
+            class_names_list, label_values = get_label_info("ML/tomatoes/class_dict.csv")
         num_classes = len(label_values)
         net_input = tf.placeholder(tf.float32,shape=[None,None,None,3])
         net_output = tf.placeholder(tf.float32,shape=[None,None,None,num_classes])

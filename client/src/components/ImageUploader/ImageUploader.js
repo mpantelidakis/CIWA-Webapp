@@ -20,6 +20,7 @@ import "react-awesome-button/src/styles/styles.scss";
 
 import "../UI/btn-awsome-style.scss"
 
+import ImageTypeDropdown from "../ImageTypeDropdown/ImageTypeDropdown"
 
 const ImageUploader = props => {
 
@@ -132,7 +133,28 @@ const ImageUploader = props => {
     const [metaform, setMetaform] = useState(metadataConfig);
     const [formIsValid, setFormIsValid] = useState(true);
     const [formOpen, setFormOpen] = useState(false);
+    const [selectedCrop, setSelectedCrop] = useState("");
 
+    const availableCrops = {
+        Pistachios: {
+            value : "Pistachios",
+            label : "Pistachios"
+        },
+        Tomatoes:{
+            value : "Tomatoes",
+            label : "Tomatoes"
+        }
+    }
+
+    // useEffect(() => {
+    //    console.log(selectedCrop)
+    // }, [selectedCrop]);
+
+    const cropChangedHandler = (event) => {
+        setSelectedCrop(event.target.value)
+        
+    }
+    
     const fileSelectedHandler = (event) => {
         if(event.target.files[0]){
             setFile(event.target.files[0]);
@@ -213,6 +235,7 @@ const ImageUploader = props => {
         // Attach the file and the metadata to it
         fd.append('file', file)
         fd.append('metadata', json_meta)
+        fd.append('crop_type', selectedCrop)
 
         // The file of the formdata will be available under request.files
         // The metadata of the formdata will be available under request.form.get('metadata)
@@ -304,11 +327,14 @@ const ImageUploader = props => {
         <Fragment>
         <div className={classes.SectionImageUploader}>
             
-        
-           
             <div className={classes.ImageUploader}>
-                {file ? 
+                {file ?
                 <Fragment>
+                <ImageTypeDropdown 
+                    selected={selectedCrop}
+                    options={availableCrops}
+                    onChange ={cropChangedHandler}
+                />  
                 <div className={classes.Message}>
                     <p><strong>Will be uploaded: </strong>{file.name}</p>
                     <p><strong>File size: </strong>{(file.size/(1024)).toFixed(2)} KBs</p>
@@ -417,6 +443,11 @@ const ImageUploader = props => {
                                     next();
                                     // props.history.push('/images');
                                     props.history.push('/images/'+ file.name);
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                    //The interceptor of the hoc handles the exception
+                                    next(false, error);
                                 })
                                 
                             }}

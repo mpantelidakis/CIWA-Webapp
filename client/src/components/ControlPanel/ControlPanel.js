@@ -262,7 +262,7 @@ const ControlPanel = props => {
                             
                             {!FlirPreviewUrl || !VisualPreviewUrl ? <Spinner/> : null}
                             <div className={classes.Comparison}>
-                                {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visual Spectrum" />
+                                {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visible Spectrum" />
                                 :null}
                             </div>  
                         </div>

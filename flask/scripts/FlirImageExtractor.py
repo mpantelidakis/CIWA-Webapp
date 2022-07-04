@@ -307,7 +307,9 @@ class FlirImageExtractor:
         heightDiff = img_visual.size[1] - cropped_img_visual.size[1]
 
         if self.is_debug:
-            print("Debug: DIff: {} x {}".format(widthDiff,heightDiff))
+            print("DEBUG: full image dimensions: {}".format(img_visual.size))
+            print("DEBUG: cropped image dimensions: {}".format(cropped_img_visual.size))
+            print("Debug: DIff: {} x {}".format(widthDiff, heightDiff))
 
         thermal_normalized = (thermal_np - np.amin(thermal_np)) / (np.amax(thermal_np) - np.amin(thermal_np))
         img_thermal = Image.fromarray(np.uint8(cm.inferno(thermal_normalized) * 255))
@@ -322,8 +324,8 @@ class FlirImageExtractor:
         #     image_filename = fn_prefix + self.thumbnail_suffix
 
         if self.is_debug:
-            print("DEBUG Saving Visual Spectrum nocrop image to:{}".format(visual_image_nocrop_path))
-            print("DEBUG Saving Visual Spectrum image to:{}".format(visual_image_path))
+            print("DEBUG Saving Visible Spectrum nocrop image to:{}".format(visual_image_nocrop_path))
+            print("DEBUG Saving Visible Spectrum image to:{}".format(visual_image_path))
             print("DEBUG Saving Thermal image to:{}".format(thermal_image_path))
 
         img_visual.save(visual_image_nocrop_path)

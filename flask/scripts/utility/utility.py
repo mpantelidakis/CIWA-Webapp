@@ -59,19 +59,23 @@ def crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at=0, val_s
     # convert image to numpy array
     mask_np = np.asarray(mask_visual)
 
-    # print(mask_np.shape)
-
-    shape = mask_np.shape
+    initial_mask_width = mask_np.shape[1]
+    initial_mask_height = mask_np.shape[0]
+    print("DEBUG: Original mask width: {} and height: {}".format(initial_mask_width, initial_mask_height))
+    
     # print(shape[0])
     # print(shape[1])
-    # print(crop_w)
-    # print(crop_h)
+    print("Width to remove: {} ".format(crop_w))
+    print("Height to remove: {} ".format(crop_h))
+
+    final_mask_width = initial_mask_width - crop_w
+    final_mask_height = initial_mask_height - crop_h
 
     # print("Diff x:",shape[0]- crop_w)
     # print("Diff y:",shape[1]- crop_h)
 
     # Remove black bounding box from the generated mask
-    mask_np = crop_center(mask_np, shape[1] - crop_h, shape[0] - crop_w)
+    mask_np = crop_center(mask_np, final_mask_width, final_mask_height)
 
     mask_np_visual = Image.fromarray(mask_np)
 
@@ -106,15 +110,15 @@ def crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at=0, val_s
     sunlit_leaves_mean_temp = sunlit_leaves_only.mean()
 
     # print(temps_np_masked.filled())
-    print("Non leaf mask dimensions: ", downscaled_not_leaves_mask.shape)
-    print("Out of temperature threshold mask dimensions: ", thermal_thresholding_mask.shape)
-    print("Final exclusion mask dimensions: ", final_exclusion_mask_np.shape)
-    print("Thermal data np dimensions: ", temps_np_masked.shape)
-    print("Leaves only dimensions: ", sunlit_leaves_only.shape)
-    print("Mean sunlit leaf temperature: ", sunlit_leaves_mean_temp)
-    print("Threshold min:",threshold_min)
-    print("Threshold max:",threshold_max)
-    print("Atmospheric Temperature: ", at)
+    # print("Non leaf mask dimensions: ", downscaled_not_leaves_mask.shape)
+    # print("Out of temperature threshold mask dimensions: ", thermal_thresholding_mask.shape)
+    # print("Final exclusion mask dimensions: ", final_exclusion_mask_np.shape)
+    # print("Thermal data np dimensions: ", temps_np_masked.shape)
+    # print("Leaves only dimensions: ", sunlit_leaves_only.shape)
+    # print("Mean sunlit leaf temperature: ", sunlit_leaves_mean_temp)
+    # print("Threshold min:",threshold_min)
+    # print("Threshold max:",threshold_max)
+    # print("Atmospheric Temperature: ", at)
 
 
     

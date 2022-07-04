@@ -105,7 +105,7 @@ class FileList(Resource):
 		# Will be used during temprature estimation
 
     	# The file of the formdata will be available under request.files
-        # The metadata of the formdata will be available under request.form.get('metadata)
+        # The metadata of the formdata will be available under request.form.get('metadata')
 
 		# check if the post request has the file part
 		if 'file' not in request.files:
@@ -175,7 +175,16 @@ class FileList(Resource):
 
 			if metadata:
 
-				
+				# Get the crop type part of the multipart-form
+				crop_type = request.form.get('crop_type')
+				if not crop_type:
+					resp = jsonify({
+						'error' : 'The crop type has not been specified.\n' \
+								  'Please use the dropdown menu to select a crop type.'
+					})
+					resp.status_code = 400
+					return resp
+
 				# Save the file info in the db
 				file_entry = {
 					'file_name': filename,
@@ -185,8 +194,10 @@ class FileList(Resource):
 					'cropped_height': h,
 					'min_temp': minTemp,
 					'max_temp': maxTemp,
-					'leaf_temps': False
+					'leaf_temps': False,
+					'crop_type': crop_type
 				}
+				print(file_entry)
 
 				# convert the numpy array of temperatures to binary so it can be stored in the mongodb
 				file_entry['temps'] = Binary(pickle.dumps(thermal_np, protocol=2), subtype=128 )
@@ -195,9 +206,9 @@ class FileList(Resource):
 				check = dbfiles.replace_one({"file_name": filename}, file_entry, True)
 				
 				if check.upserted_id is not None:
-					resp['msg'] = "File uploaded successfully! Generated Visual and Thermal Images."
+					resp['msg'] = "File uploaded successfully! Generated Visible spectrum and Thermal Images."
 				else:
-					resp['msg'] = "File updated successfully! Regenerated Visual and Thermal Images."
+					resp['msg'] = "File updated successfully! Regenerated Visible spectrum and Thermal Images."
 
 			else:
 				resp['msg'] = "Successfully extracted metadata!"
@@ -295,7 +306,7 @@ class Predict(Resource):
 
 			if files['has_mask'] == False:
 
-				pred = Predictor(image=path)
+				pred = Predictor(image=path, crop_type=files['crop_type'])
 				has_mask = pred.predictNsave()
 				
 				# get record from mongodb, convert Binary to numpy array
@@ -308,8 +319,8 @@ class Predict(Resource):
 
 				# print("Numpy array of temperatures: ", temps_np)
 				# print("Mask file path: ", mask_path)
-				# print("Crop width: ", crop_w)
-				# print("Crop height: ", crop_h)
+				print("Crop width: ", crop_w)
+				print("Crop height: ", crop_h)
 				mean_sunlit_temp, leaves_np = crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at, 7, 7)
 
 				CWSI = calculateCWSI(Ta=files['metadata']['AtmosphericTemperature'], Tc=mean_sunlit_temp, RH=files['metadata']['RelativeHumidity'])
@@ -323,7 +334,9 @@ class Predict(Resource):
 					'leaf_temps': json.dumps(leaves_np, cls=NumpyEncoder),
 					'mean_sunlit_temp' : mean_sunlit_temp,
 					'CWSI' : CWSI,
-					'msg' :  "Ran the file through the FRRN model. Found sunlit leaves mean temperature."
+					'msg' :  'Ran the file through the FRRN model\n \
+							 Calculated sunlit leaves mean temperature\n \
+							 Calculated the Crop Water Stress Index.'
 				}
 				resp = jsonify(resp)
 				# else:
