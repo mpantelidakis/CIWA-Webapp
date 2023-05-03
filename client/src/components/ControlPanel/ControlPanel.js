@@ -25,7 +25,7 @@ import Button from '../UI/Button/Button'
 import ImageWithOverlay from '../UI/ImageWithOverlay/ImageWithOverlay'
 import classes from './ControlPanel.module.scss'
 
-import { BrowserView,MobileView,isMobile } from 'react-device-detect';
+import { BrowserView,MobileView} from 'react-device-detect';
 
 import { Histogram } from '../Visualization/Histogram/Histogram'
 
@@ -78,8 +78,6 @@ const ControlPanel = props => {
     const [predActive, setpredActive] = useState(false)
 
     const [hasMask, setHasMask] = useState(false)
-
-    const [isMobile1,setIsMobile] = useState(false)
 
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
@@ -155,7 +153,6 @@ const ControlPanel = props => {
                         setMaxTemp(res.data['max_temp'])
                         setMeanLeafTemp(res.data['mean_sunlit_temp'])
                         setHasMask(res.data['has_mask'])
-                        setIsMobile(isMobile)
                         if(res.data['CWSI'])
                             setCWSI(res.data['CWSI'])
 
