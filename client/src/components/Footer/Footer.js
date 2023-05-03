@@ -4,11 +4,13 @@ import Citlogo from '../FresnoLogo/FresnoLogo'
 import Tuclogo from '../TucLogo/TucLogo'
 
 import { Github, Facebook, Linkedin } from 'grommet-icons';
+import { BrowserView } from 'react-device-detect';
 
 import classes from './Footer.module.scss'
 
 const Footer = () => {
     return(
+        <BrowserView>
         <section className={classes.Footer}>
             <div className={classes.Group_createdBy_name}>
                 {/* <p>&copy; 2022 Minas Pantelidakis</p> */}
@@ -23,6 +25,7 @@ const Footer = () => {
                 <Aulogo/> 
             </div>
         </section>
+        </BrowserView>
     )
 }
 

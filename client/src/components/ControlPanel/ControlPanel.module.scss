@@ -8,7 +8,7 @@
     // background-color: rgb(248, 246, 242);
 }
 
-.CPnButtons{
+.CPnButtonsDesktop{
     display: inline-flex;
     padding-right: 1rem;
     // padding-bottom: 1rem;
@@ -16,6 +16,27 @@
     border-right: 1px solid rgba(0, 0, 0, 0.219);
     border-bottom: 1px solid rgba(0, 0, 0, 0.219);
     // background-color: rgb(3, 13, 70);
+}
+
+.CPnButtonsMobile{
+    position:fixed;
+    bottom:0;
+    height:8rem;
+    width:100%;
+    z-index:10000;
+    padding-right: 1rem;
+    // padding-bottom: 1rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.219);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.219);
+    background-color:#191d1fe0;
+}
+
+.CPnButtonTxt{
+    color: white;
+}
+
+.Spacer{
+    padding-bottom:8rem;
 }
 
 .ControlTitle{
@@ -174,6 +195,7 @@
         transform: translate(-50%,-50%);
     }
 }
+
 .MeanLeafTempIcon{
     animation: rotateClockwise 120s linear infinite ;
 }

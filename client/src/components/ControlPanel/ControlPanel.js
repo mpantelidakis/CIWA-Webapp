@@ -25,6 +25,8 @@ import Button from '../UI/Button/Button'
 import ImageWithOverlay from '../UI/ImageWithOverlay/ImageWithOverlay'
 import classes from './ControlPanel.module.scss'
 
+import { BrowserView,MobileView,isMobile } from 'react-device-detect';
+
 import { Histogram } from '../Visualization/Histogram/Histogram'
 
 import ParticleImg from '../ParticleImg/ParticleImg'
@@ -76,6 +78,8 @@ const ControlPanel = props => {
     const [predActive, setpredActive] = useState(false)
 
     const [hasMask, setHasMask] = useState(false)
+
+    const [isMobile1,setIsMobile] = useState(false)
 
     // const visual_request = axios.get('images/' + props.match.params['imageName'] , { 
     //     responseType: 'blob',
@@ -151,6 +155,7 @@ const ControlPanel = props => {
                         setMaxTemp(res.data['max_temp'])
                         setMeanLeafTemp(res.data['mean_sunlit_temp'])
                         setHasMask(res.data['has_mask'])
+                        setIsMobile(isMobile)
                         if(res.data['CWSI'])
                             setCWSI(res.data['CWSI'])
 
@@ -225,102 +230,113 @@ const ControlPanel = props => {
 
     return (
         
-        <Fragment>
-            {imageNotFound ? <NotFound>Error 404, image not found.</NotFound> : 
+        <><Fragment>
+            {imageNotFound ? <NotFound>Error 404, image not found.</NotFound> :
                 <div className={classes.ControlPanel}>
-
-                    <div className={classes.CPnButtons}>
-                        <h1 className={classes.ControlTitle}>Control Panel</h1>
-                        <div className={classes.Buttons}>
+                    <BrowserView>
+                        <div className={classes.CPnButtonsDesktop}>
+                            <h1 className={classes.ControlTitle}>Control Panel</h1>
+                            <div className={classes.Buttons}>
                                 <Button btnType='Danger' clicked={deleteHandler}> <Trash color="plain" size="medium" /><span>Delete</span></Button>
                                 <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="plain" size="medium" /><span>Download temperature data</span></Button>
                                 <Button btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" />
-                                    <span class={classes.FindSunlitBtn}>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div> 
+                                    <span class={classes.FindSunlitBtn}>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div>
                                 </Button>
+                            </div>
                         </div>
-                    </div>
-                    
+                    </BrowserView>
                     {/* <img src={VisualPreviewUrl}/> */}
 
-                   
-                     { FlirPreviewUrl  && temperatureArray ? 
+
+                    {FlirPreviewUrl && temperatureArray ?
                         <div className={classes.HistogramWrapper}>
                             <p className={classes.Hint_no_margin}>The true thermal image is 60x80, so 4800 pixels in total.</p>
-                            <Histogram series={temperatureArray} min={minTemp} max={maxTemp}/>
-                        </div> 
-                    : null}
+                            <Histogram series={temperatureArray} min={minTemp} max={maxTemp} />
+                        </div>
+                        : null}
 
-                    
-                    
+
+
                     <section className={classes.ImgNmeta}>
                         <div className={classes.Container}>
-                            <p className={classes.Hint}>Left: Flir image 640x480.<br/>Right: Generated Visible Spectrum Image <br/>Use the slider in the middle to compare the images.</p>
-                
+                            <p className={classes.Hint}>Left: Flir image 640x480.<br />Right: Generated Visible Spectrum Image <br />Use the slider in the middle to compare the images.</p>
+
                             <div className={classes.Header}>
                                 <p className={classes.ImgName}>{imageName}</p>
                             </div>
-                            
-                            {!FlirPreviewUrl || !VisualPreviewUrl ? <Spinner/> : null}
+
+                            {!FlirPreviewUrl || !VisualPreviewUrl ? <Spinner /> : null}
                             <div className={classes.Comparison}>
-                                {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider"  sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visible Spectrum" />
-                                :null}
-                            </div>  
+                                {FlirPreviewUrl ? <ReactCompareImage aspectRatio="wider" sliderLineWidth="5" leftImageLabel="Flir" leftImage={FlirPreviewUrl} rightImage={VisualPreviewUrl} rightImageLabel="Visible Spectrum" />
+                                    : null}
+                            </div>
                         </div>
                         {VisualPreviewUrl && PredictionPreviewUrl ?
-                        <div className={classes.Prediction}>
-                            <p className={classes.Hint}>Leaves are painted with yellow color. Use the slider on the right to adjust the opacity of the generated mask.</p>
-                            <ImageWithOverlay bg={VisualPreviewUrl} overlay={PredictionPreviewUrl}/> 
-                        </div>
-                         : null}
-                        {metadata? <div className={classes.TableWrapper}>
+                            <div className={classes.Prediction}>
+                                <p className={classes.Hint}>Leaves are painted with yellow color. Use the slider on the right to adjust the opacity of the generated mask.</p>
+                                <ImageWithOverlay bg={VisualPreviewUrl} overlay={PredictionPreviewUrl} />
+                            </div>
+                            : null}
+                        {metadata ? <div className={classes.TableWrapper}>
                             <p className={classes.Hint}>Metadata found in the Flir image.</p>
                             <Table data={metadata}>Image metadata</Table>
                         </div> : null}
                     </section>
 
-                    
+
                     {meanLeafTemp && CWSI ?
-                    <section className={classes.Analytics}>
-                        <div className={classes.MeanLeafTempWrapper}>
-                            <p className={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature</p>
-                            <ThemeProvider theme={sunTheme}>
-                                <Solaris className={classes.MeanLeafTempIcon} size="xxlarge" color="fourth"  /> 
-                            </ThemeProvider>
-                            <p className={classes.MeanLeafTemp}>{meanLeafTemp.toFixed(2)}</p>
-                            <span>&#8451;</span>
-                        </div>
-                        <div className={classes.MeanLeafTempWrapper}>
-                            <p className={classes.MeanLeafTempParagraph}>Crop Water Stress Index</p>
-                            <ThemeProvider theme={sunTheme}>
-                                <Debian className={classes.CWSIcon} size="xxlarge" color="blue"  /> 
-                            </ThemeProvider>
-                            <p className={classes.CWSI}>{CWSI.toFixed(3)}</p>
-                            {/* <span>&#8451;</span> */}
-                        </div>
-                    </section>
-                    : null}
-                    
+                        <section className={classes.Analytics}>
+                            <div className={classes.MeanLeafTempWrapper}>
+                                <p className={classes.MeanLeafTempParagraph}>Sunlit leaves mean temperature</p>
+                                <ThemeProvider theme={sunTheme}>
+                                    <Solaris className={classes.MeanLeafTempIcon} size="xxlarge" color="fourth" />
+                                </ThemeProvider>
+                                <p className={classes.MeanLeafTemp}>{meanLeafTemp.toFixed(2)}</p>
+                                <span>&#8451;</span>
+                            </div>
+                            <div className={classes.MeanLeafTempWrapper}>
+                                <p className={classes.MeanLeafTempParagraph}>Crop Water Stress Index</p>
+                                <ThemeProvider theme={sunTheme}>
+                                    <Debian className={classes.CWSIcon} size="xxlarge" color="blue" />
+                                </ThemeProvider>
+                                <p className={classes.CWSI}>{CWSI.toFixed(3)}</p>
+                                {/* <span>&#8451;</span> */}
+                            </div>
+                        </section>
+                        : null}
+
                     <Modal show={predActive}> <p className={classes.ModalText}>Detecting sunlit leaves. Please wait...</p>
-                    {predActive ? <ParticleImg img={VisualPreviewUrl}/> : null}</Modal>
-                   
+                        {predActive ? <ParticleImg img={VisualPreviewUrl} /> : null}</Modal>
 
-                                        
-                    {VisualPreviewUrl && PredictionPreviewUrl ? null :
-                    <section className={classes.FindSunlitSection}>
-                        <div className = {classes.FindSunlitActionItem}>
-                            <Button style="margin: 0 auto;"btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" />
-                                <span>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div> 
-                            </Button> 
-                        </div>
-                    </section>
-                    }
-                   
-                   
 
-                   
+                    <BrowserView>
+                        {VisualPreviewUrl && PredictionPreviewUrl ? null :
+                            <section className={classes.FindSunlitSection}>
+                                <div className={classes.FindSunlitActionItem}>
+                                    <Button style="margin: 0 auto;" btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="plain" size="medium" />
+                                        <span>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div>
+                                    </Button>
+                                </div>
+                            </section>}
+                    </BrowserView>
+
+
 
                 </div>}
-        </Fragment>
+        </Fragment><MobileView>
+                <div className={classes.Spacer}></div>
+                <div className={classes.CPnButtonsMobile}>
+                    <h1 className={classes.ControlTitle}>Control Panel</h1>
+                    <div className={classes.Buttons}>
+                        <Button btnType='Danger' clicked={deleteHandler}> <Trash color="white" size="medium" /><span className={classes.CPnButtonTxt}>Delete</span></Button>
+                        <Button btnType='Success' clicked={downloadCsvHandler}> <Download color="white" size="medium" /><span className={classes.CPnButtonTxt}>Download temperature data</span></Button>
+                        <Button btnType='Success' clicked={predictHandler} disabled={hasMask}> <Technology color="white" size="medium" />
+                            <span class={classes.CPnButtonTxt}>Find sunlit leaves</span><div className={classes.FindSunlitImg}><img src={sunlitImg} alt="findSunlit" /></div>
+                        </Button>
+                    </div>
+                </div>
+            </MobileView></>
+        
         
     )
 }
