@@ -132,10 +132,12 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
-def calculateCWSI(Ta,Tc,RH):
+def calculateCWSI(Ta,Tc,RH,crop_type):
     Slope = -1.49
     Intercept = 3.09
-
+    if crop_type == "Tomatoes":
+        Slope = -1.17
+        Intercept = 0.18
     # Ta = 30
     # Tc = 29
     # RH = 0.35

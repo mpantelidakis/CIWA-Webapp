@@ -299,13 +299,12 @@ class File(Resource):
 class Predict(Resource):
 	# Used to get a specific image details
 	def get(self, filename):
-
+		
 		files = dbfiles.find_one({"file_name": filename})
 		if files:
 			path = os.path.join(app.config['UPLOAD_FOLDER'],"Visual_Images_nocrop", filename)
 
 			if files['has_mask'] == False:
-
 				pred = Predictor(image=path, crop_type=files['crop_type'])
 				has_mask = pred.predictNsave()
 				
@@ -322,8 +321,10 @@ class Predict(Resource):
 				print("Crop width: ", crop_w)
 				print("Crop height: ", crop_h)
 				mean_sunlit_temp, leaves_np = crop_mask_and_overlay_temps(temps_np, mask_path, crop_w, crop_h, at, 7, 7)
-
-				CWSI = calculateCWSI(Ta=files['metadata']['AtmosphericTemperature'], Tc=mean_sunlit_temp, RH=files['metadata']['RelativeHumidity'])
+				CWSI = calculateCWSI(Ta=files['metadata']['AtmosphericTemperature'], 
+					Tc=mean_sunlit_temp, 
+					RH=files['metadata']['RelativeHumidity'],
+					crop_type = files['crop_type'])
 
 				# convert the numpy array of temperatures to binary so it can be stored in the mongodb
 				leaf_temps = Binary(pickle.dumps(leaves_np, protocol=2), subtype=128 )
