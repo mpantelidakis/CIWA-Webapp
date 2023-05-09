@@ -138,6 +138,7 @@ def calculateCWSI(Ta,Tc,RH,crop_type):
     if crop_type == "Tomatoes":
         Slope = -1.17
         Intercept = 0.18
+
     # Ta = 30
     # Tc = 29
     # RH = 0.35
@@ -176,6 +177,9 @@ def calculateCWSI(Ta,Tc,RH,crop_type):
     print("VPG: ", VPG)
     print("T_ll: ", T_ll)
     print("T_ul: ", T_ul)
+    print("crop_type: ",crop_type)
+    print("Slope: ",Slope) 
+    print("Intercept: ",Intercept)
     print("CWSI: ", CWSI)
 
     return CWSI
