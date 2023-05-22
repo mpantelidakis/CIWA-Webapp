@@ -5,8 +5,7 @@ Precision irrigation is vital for a resource-sustainable agriculture future. Man
 The tool uses a docker environment, running four containers, React for the front end, Nginx as a reverse proxy and file server, Flask web
 framework for the REST API, and MongoDB as a database. The tool enables a user to upload a FLIR AX8 image. It provides
 the user with a graphical interface to manipulate the metadata of the image. The back-end of the tool receives the image and metadata.
-The FRRN-A model is utilized for sunlit-leaf segmentation. The CWSI is returned to the user. Apart from
-the CWSI measurement, the tool offers multiple features such as direct comparison between the thermal and visible-spectrum images, temperature histogram analysis, and the option to download temperature data in .csv format. 
+The FRRN-A model is utilized for sunlit-leaf segmentation. The CWSI is returned to the user. In addition to the CWSI measurement, the tool offers multiple features such as direct comparison between the thermal and visible-spectrum images, temperature histogram analysis, and the option to download temperature data in .csv format. 
 
 To build the images and start the app in development mode, please use `docker-compose -f docker-compose.dev.yml up --build`.
 
