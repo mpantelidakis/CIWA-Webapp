@@ -6,7 +6,7 @@ Flask-Cors==3.0.8
 Flask-PyMongo==2.3.0
 Flask-RESTful==0.3.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 kiwisolver==1.2.0
 MarkupSafe==1.1.1
 matplotlib==3.2.1
